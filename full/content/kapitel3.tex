@@ -1,0 +1,240 @@
+%Folgende Zeile aktivieren und als SVN property "svn:keywords" auf "Id" setzen, um SVN Versionsinformationen im Dokument zu erhalten
+%\svnInfo $Id: kapitel2.tex 62 2012-04-20 15:14:01Z koppor $ 
+
+%Die Angabe des schlauen Spruchs auf diesem Wege funtioniert nur,
+%wenn keine Änderung des Kapitels mittels den in preambel/chapterheads.tex
+%vorgeschlagenen Möglichkeiten durchgeführt wurde.
+\chapter{SIFT/SURF}
+%\vspace{-3cm}
+%\vspace{2cm}
+
+\label{chap:k3}
+SIFT (Scale-invariant feature transform) ist ein von David Lowe 1999 vorgestelltes Verfahren zur Extraktion von lokalen Merkmalen aus Bildern. Die mit diesem Verfahren gefundene Merkmale haben die Eingeschaft, dass sie robust gegenüber Rotation, Translation und Skalierung sind, und damit zuverlässig in anderen Bilder wiedererkannt werden können.
+Um Objekte in Bildern mit SIFT erkennen und lokalisieren zu können, sind also zwei Schritte nötig:
+\begin{enumerate}
+	\item Extraktion und Beschreibung von Merkmalen (Features) des gesuchten Objekts
+	\item Lokalisation der Merkmale im Suchbild
+\end{enumerate}
+
+\section{Extraktion und Beschreibung von Merkmalen (Features) des gesuchten Objekts}
+Der Algorithmus zur Extraktion und Beschreibung der Merkmale besteht dabei aus vier Verarbeitungsstufen:
+\subsection{Ermittlung potentieller Merkmale in DoG-Pyramiden}
+Um Merkmale zu ermitteln, die robust gegenüber Skalierung sind, kommt das Verfahren der DoG (Difference of gaussians) Pyramiden zum Einsatz. Dabei werden aus dem Ausgangsbild zunächst n Gaußpyramiden berechnet. Eine Pyramide besteht dabei aus fortlaufen stärker geglätteten Bildern des Ausgangsbildes $g$. Zur Glättung kommt dabei ein Gaußfilter $G$ zum Einsatz:
+\begin{equation*}
+ g(x, y) * G_\vartheta (x, y) = g(x, y) * (\frac{1}{\sqrt{2\pi \vartheta ^2}}\cdot e^{-\frac{x^2 + y^2}{2\vartheta ^2}})
+\end{equation*}
+
+Im Anschluss wird das letzte Bild der Pyramide um 50\% verkleinert, und daraus durch erneute fortlaufende Glättung mit dem Gaußfilter eine neue Pyramide erzeugt.
+Je zwei benachbarte Bilder einer Gaußpyramide werden nun voneinander Subtrahiert. Aus den Resultaten entstehen dabei die DoG Pyramiden:
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{dog.pdf}
+    \caption{DoG-Pyramiden}
+    \label{fig:dog_pyr}
+  \end{center}
+\end{figure}
+
+Die dadurch erzeugten DoG-Pyramiden werden nun auf minimale und maximale Pixelwerte untersucht.
+Ein Maximum ist gefunden, wenn der Grauwert eines Pixels größer als der seiner 26 Nachbarn ist. Nachbarschaft eines Pixels ergibt sich dann aus seinen acht Nachbarn der selben Ebene, sowie aus den jeweils neun Nachbarn der benachbarten Ebenen in der DoG-Pyramide.
+Die Suche nach Minima erfolg auf die selbe Art und Weise. Die Information, auf welcher Skalierung die potentiellen Merkmalspunkte liegen, wird dabei ebenfalls gespeichert.
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{scale.pdf}
+    \caption{Nachbarschaft eines Pixels}
+    \label{fig:neighbor}
+  \end{center}
+\end{figure}
+
+\subsection{Filterung und Lokalisation potentieller Merkmalspunkte}
+as oben genannte Verfahren liefert neben den robusten Merkmalspunkten eine große Menge von instabilen, für die weitere Verarbeitung nicht zu gebrauchende Merkmale.
+Daher werden die gefundenen Merkmalspunkte anhand von Stabilitätskriterien gefiltert.
+Im ersten Schritt werden dabei alle Merkmalspunkte entfernt, die einen DoG-Wert von weniger als 0,03, und somit einen relativ niedrigen Kontrast besitzen.
+Merkmalspunkte, die auf Ecken liegen sind “prägnanter” (und somit staibler) als solche, die auf einer Kante liegen, daher werden alle Merkmalspunkte entfernt, die auf einer Kante, aber nicht auf einer Ecke liegen.
+Dies geschieht unter Anwendung der Hesse-Matrix (todo).
+
+\subsection{Bestimmung der Hauptorientierungen}
+Um Invarianz der verbleibenden Merkmalspunkte gegenüber Rotation zu erreichen, wird für jeden Merkmalspunkt dessen Hauptorientierung berechnet.
+Dafür nutzt man das gaußgefilterte Bild, welches der Skalierung des zu untersuchenden Merkmalspunktes am nächsten kommt. In diesem Bild werden nun innerhalb einer festen Region um den Merkmalspunkt herum die Gradientenlängen $m(x, y)$ und die Gradientenorientierungen $\theta (x, y)$ bezüglich eines Punktes $g(x, y)$ berechnet, wobei
+\begin{equation*}
+m(x, y) = \sqrt{(g(x + 1, y) - g(x - 1, y))^2 +(g(x, y+1) - g(x, y-1))^2}
+\end{equation*}
+
+und
+
+\begin{equation*}
+\theta (x, y) = tan^{-1}\cdot \frac{g(x +1, y) - g(x-1, y)}{g(x, y +1) - g(x, y-1)}
+\end{equation*}
+
+Die so ermittelten Gradientenorientierungen werden nun anhand ihrer Gradientenlängen gewichtet. Dadurch haben Gradientenrichtungen mit großer Gradientenlänge einen größeren Einfluss auf die Hauptorientierung als Gradientenrichtungen mit niedriger Gradientenlänge.
+Danach werden die Gradientenorientierungen zusätzlich anhand ihrer Entfernung zum Merkmalspunkt gewichtet, um Gradientenrichtungen, die sich näher am Merkmalspunkt befinden stärker zu gewichten.
+
+Aus den gewichteten Gradientenorientierungen wird nun ein Orientierungshistogramm erstellt. Dieses Histogramm ist in 36 Winkelbereiche eingeteilt und hat somit eine Klassenbreite von $10\,^{\circ}$.
+Jede Gradientenorientierung wird dabei anhand ihrer Gewichtung an der passenden Stelle im Histogramm aufaddiert. \\
+Nach der Erstellung des Histogramms kann aus diesem die Gradientenlänge $m_{max}$ abgelesen werden (Winkelbereich mit der größten Summe). Die Hauptorientierung des Merkmalspunktes  setzt sich dabei aus $m_{max}$, sowie der zugehörigen Gradientenorientierung $\theta_{max}$ maxzusammen.
+Für den Fall, dass eine weitere Orientierung mit der Gradientenlänge $m_i > 0,8 m_{max}$
+existiert; wie es bei Eckpunkten häufig der Fall ist; wird an der Stelle $(x, y)$ ein weiterer Merkmalspunkt mit der Hauptorientierung $(m_i, \theta_i)$ erstellt.
+
+\section{Lokalisation der Merkmale im Suchbild}
+\label{sec:mf}
+Mathematische Formeln kann man $so$ setzen. \texttt{symbols-a4.pdf} (zu finden auf \url{http://www.ctan.org/tex-archive/info/symbols/comprehensive/symbols-a4.pdf}) enthält eine Liste der unter LaTeX direkt verfügbaren Symbole. z.\,B.\ $\mathbb{N}$ für die Menge der natürlichen Zahlen. Für eine vollständige Dokumentation für mathematischen Formelsatz sollte die Dokumentation zu \texttt{amsmath}, \url{ftp://ftp.ams.org/pub/tex/doc/amsmath/} gelesen werden.
+
+Folgende Gleichung erhält keine Nummer, da \texttt{\textbackslash equation*} verwendet wurde.
+
+\begin{equation*}
+x = y
+\end{equation*}
+
+Die Gleichung~\ref{eq:test} erhält eine Nummer:
+\begin{equation}
+\label{eq:test}
+x = y
+\end{equation}
+
+Eine ausführliche Anleitung zum Mathematikmodus von LaTeX findet sich in \url{http://www.ctan.org/tex-archive/help/Catalogue/entries/voss-mathmode.html}.
+
+\section{Quellcode}
+Listing~\ref{lst:ListingANDlstlisting} zeigt, wie man Programmlistings einbindet.  Mittels \texttt{\textbackslash lstinputlisting} kann man den Inhalt direkt aus Dateien lesen.
+
+%Listing-Umgebung wurde durch \newfloat{Listing} definiert
+\begin{Listing}
+\begin{lstlisting}
+<listing name="second sample">
+  <content>not interesting</content>
+</listing>
+\end{lstlisting}
+\caption{lstlisting in einer Listings-Umgebung, damit das Listing durch Balken abgetrennt ist}
+\label{lst:ListingANDlstlisting}
+\end{Listing}
+
+Quellcode im \lstinline|<listing />| ist auch möglich.
+
+\section{Abbildungen}
+Die Abbildungen~\ref{fig:chor1} und~\ref{fig:chor2} sind für das Verständnis dieses Dokuments
+wichtig. Im Anhang zeigt Abbildung~\vref{fig:AnhangsChor} erneut die komplette Choreographie.
+
+%Die Parameter in eckigen Klammern sind optionale Parameter - z.B. [htb!]
+%htb! bedeutet: "Liebes LaTeX, bitte platziere diese Abbildung zuerst hier ("_h_ere"). Falls das nicht funktioniert, dann bitte oben auf der Seite ("_t_op"). Und falls das nicht geht, bitte unten auf der Seite ("_b_ottom"). Und bitte, bitte bevorzuge hier und oben, auch wenn's net so optimal aussieht ("!")
+%Diese sollten nach Möglichkeit NICHT verwendet werden. LaTeX's Algorithmus für das Platzieren der Gleitumgebung ist schon sehr gut!
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{choreography.pdf}
+    \caption{Beispiel-Choreographie}
+    \label{fig:chor1}
+  \end{center}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=.8\textwidth]{choreography.pdf}
+    \caption[Beispiel-Choreographie]{Die Beispiel-Choreographie. Nun etwas kleiner, damit \texttt{\textbackslash textwidth} demonstriert wird. Und auch die Verwendung von alternativen Bildunterschriften für das Verzeichnis der Abbildungen. Letzteres ist allerdings nur Bedingt zu empfehlen, denn wer liesst schon so viel Text unter einem Bild? Oder ist es einfach nur Stilsache?}
+    \label{fig:chor2}
+  \end{center}
+\end{figure}
+
+\section{Tabellen}
+Tabelle~\ref{tab:Ergebnisse} zeigt Ergebnisse.
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ccc}
+	\toprule
+	\multicolumn{2}{c}{\textbf{zusammengefasst}} & \textbf{Titel} \\ \midrule
+	Tabelle & wie & in \\
+	\url{tabsatz.pdf}& empfohlen & gesetzt\\
+	
+	\multirow{2}{*}{Beispiel} & \multicolumn{2}{c}{ein schönes Beispiel}\\
+	 & \multicolumn{2}{c}{für die Verwendung von \gq{multirow}}\\
+	\bottomrule
+    \end{tabular}
+    \caption[Beispieltabelle]{Beispieltabelle -- siehe \url{http://www.ctan.org/tex-archive/info/german/tabsatz/}}
+    \label{tab:Ergebnisse}
+  \end{center}
+\end{table}
+
+\section{Pseudocode}
+Algorithmus~\vref{alg:sample} zeigt einen Beispielalgorithmus.
+\begin{Algorithmus} %Die Umgebung nur benutzen, wenn man den Algorithmus ähnlich wie Graphiken von TeX platzieren lassen möchte
+\caption{Sample algorithm}
+\label{alg:sample}
+\begin{algorithmic}
+\Procedure{Sample}{$a$,$v_e$}
+\State $\mathsf{parentHandled} \gets (a = \mathsf{process}) \lor \mathsf{visited}(a'), (a',c,a) \in \mathsf{HR}$ 
+\State \Comment $(a',c'a) \in \mathsf{HR}$ denotes that $a'$ is the parent of $a$
+\If{$\mathsf{parentHandled}\,\land(\mathcal{L}_\mathit{in}(a)=\emptyset\,\lor\,\forall l \in \mathcal{L}_\mathit{in}(a): \mathsf{visited}(l))$}
+\State $\mathsf{visited}(a) \gets \text{true}$
+\State $\mathsf{writes}_\circ(a,v_e) \gets
+\begin{cases}
+\mathsf{joinLinks}(a,v_e) & \abs{\mathcal{L}_\mathit{in}(a)} > 0\\
+\mathsf{writes}_\circ(p,v_e)
+& \exists p: (p,c,a) \in \mathsf{HR}\\
+(\emptyset, \emptyset, \emptyset, false) & \text{otherwise}
+\end{cases}
+$
+\If{$a\in\mathcal{A}_\mathit{basic}$}
+  \State \Call{HandleBasicActivity}{$a$,$v_e$}
+\ElsIf{$a\in\mathcal{A}_\mathit{flow}$}
+  \State \Call{HandleFlow}{$a$,$v_e$}
+\ElsIf{$a = \mathsf{process}$} \Comment Directly handle the contained activity
+  \State \Call{HandleActivity}{$a'$,$v_e$}, $(a,\bot,a') \in \mathsf{HR}$
+  \State $\mathsf{writes}_\bullet(a) \gets \mathsf{writes}_\bullet(a')$
+\EndIf
+\ForAll{$l \in \mathcal{L}_\mathit{out}(a)$}
+  \State \Call{HandleLink}{$l$,$v_e$}
+\EndFor
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{Algorithmus}
+
+\clearpage
+Und wer einen Algorithmus schreiben möchte, der über mehrere Seiten geht, der kann das nur mit folgendem \textbf{üblen} Hack tun:
+
+{
+\begin{minipage}{\textwidth}
+\hrule height .8pt width\textwidth
+\vskip.15em%\vskip\abovecaptionskip\relax
+\stepcounter{Algorithmus}
+\addcontentsline{alg}{Algorithmus}{\protect\numberline{\theAlgorithmus}{\ignorespaces Description \relax}}
+\noindent\textbf{Algorithmus \theAlgorithmus} Description
+%\stepcounter{algorithm}
+%\addcontentsline{alg}{Algorithmus}{\thealgorithm{}\hskip0em Description}
+%\textbf{Algorithmus \thealgorithm} Description
+\vskip.3em%\vskip\belowcaptionskip\relax
+\hrule height .5pt width\textwidth
+\end{minipage}
+code goes here\\
+test2\\
+\vskip-.9em
+\hrule height .5pt width\textwidth
+}
+
+\section{Verweise}
+Verweise auf einen Abschnitt gehen mittels: ``Siehe Abschnitt~\vref{sec:mf}''. Das Kommando \texttt{\textbackslash{}vref} funktioniert ähnlich wie \texttt{\textbackslash{}ref} mit dem Unterschied, dass zusätzlich ein Verweis auf die Seite hinzugefügt wird. \texttt{vref}: Abschnitt \vref{sec:diff}, \texttt{ref}: \ref{sec:diff}.
+
+%Mit MiKTeX Installationsstund 2012-01-16 nicht mehr nötig
+%Falls ein Abschnitt länger als eine Seite wird und man mittels \texttt{\textbackslash{}vref} auf eine konkrete Stelle in der Section
+%verweisen möchte, dann sollte man \texttt{\textbackslash{}phantomsection} verwenden und dann wird
+%auch bei \texttt{vref} die richtige Seite angeben.
+
+%%The link location will be placed on the line below.
+%%Tipp von http://en.wikibooks.org/wiki/LaTeX/Labels_and_Cross-referencing#The_hyperref_package_and_.5Cphantomsection
+%\phantomsection
+%\label{alabel}
+%Das Beispiel für \texttt{\textbackslash{}phantomsection} bitte im \LaTeX{}-Quellcode anschauen.
+
+%Hier das Beispiel: Siehe Abschnitt \vref{hack1} und Abschnitt \vref{hack2}.
+
+\section{Verschiedenes}
+\label{sec:diff}
+\ifdeutsch
+Ziffern (123\,654\,789) werden schön gesetzt. Falls dies nicht gewünscht ist, den Parameter \texttt{osf} bei dem Paket \texttt{mathpazo} herausnehmen.
+\fi
+
+\textsc{Kapitälchen} werden schön gesperrt...
+
+\begin{compactenum}[I]
+\item Man kann auch die Nummerierung dank paralist kompakt halten
+\item und auf eine andere Nummerierung umstellen
+\end{compactenum}
+
+\section{Weitere Informationen}
+Verbesserungsvorschläge für diese Vorlage sind immer willkommen. Bitte im Trac ein Ticket eingragen (\url{https://vorlagen.studiforge.informatik.uni-stuttgart.de/trac.fcgi/wiki/WikiStart}). Vom Trac sind weitere \LaTeX-Seiten verlinkt.

@@ -1,0 +1,14 @@
+%Folgende Zeile aktivieren und als SVN property "svn:keywords" auf "Id" setzen, um SVN Versionsinformationen im Dokument zu erhalten
+%\svnInfo $Id$ 
+
+\chapter{Einleitung}
+In diesem Kapitel steht die Einleitung zu dieser Diplomarbeit. Sie soll nur als Beispiel dienen und hat nichts mit dem Buch \cite{WSPA} zu tun. Nun viel Erfolg bei der Arbeit!
+
+\section*{Gliederung}
+Die Arbeit ist in folgender Weise gegliedert:
+\begin{description}
+\item[Kapitel~\ref{chap:k2} -- \nameref{chap:k2}:] Hier werden werden die Grundlagen dieser Arbeit beschrieben.
+\item[Kapitel~\ref{chap:zusfas} -- \nameref{chap:zusfas}] fasst die Ergebnisse der Arbeit zusammen und stellt Anknüpfungspunkte vor.
+
+Nur das es vorkommt \cite{WSPA}.
+\end{description}
