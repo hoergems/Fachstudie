@@ -1,2 +1,14 @@
 *.log
 *.idx
+*.aux
+*.pdf
+*.alg
+*.bbl
+*.brf
+*.code
+*.lof
+*.lot
+*.out
+*.gz
+*.toc
+*.blg
