@@ -76,4 +76,28 @@ Der einfachste Ansatz zwei Deskriptoren miteinander zu Vergleichen, ist die Best
 e = \sqrt{\sum_{i = 1}^{n}(V_{1i} - V_{2i})}
 \end{equation*}
 
+\section{Template Matching}
+	Template Matching ist ein Verfahren, bei dem ein prototypisches Modell einer Struktur im Bild gesucht wird. Das Template ist dabei selbst ein kleines Bild, welches wie ein Filterkern über das Bild wandert.
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{template.pdf}
+    \caption{Template eines Bohrpunktes (Vergrößert)}
+    \label{fig:template}
+  \end{center}
+\end{figure}
+Dabei wird in jedem Punkt $(x, y)$ ein Änhlichkeitsmaß des Templates gegenüber dem Bild berechnet.
+Ein häufig verwendetes Änglichkeitsmaß ist dabei \textbf{Mean absolute difference (MAD)}.
+Dieses Änhlichkeitsmaß bezeichnet die mittlere Differenz der Grauwerte des Bildes $g$ und des Templates $T$:
+\begin{equation*}
+MAD(x, y) = \frac{1}{M \cdot N} \sum_{ij}^{{}} \left | g(x +i, y + j) - T(i, j) \right |
+\end{equation*}
+Befindet sich bei der Suche das Template genau über der gesuchten Struktur, ist $MAD(x, y)$ minimal, während bei keiner Übereinstimmung des Templates und des Bildausschnittes $MAD(x, y)$ groß ist. Dadurch sind im resultierenden Bild, in dem das Änhlichkeitsmaß abgebildet wird, lokale Minima die Orte, in denen sich die Struktur des Templates befindet.
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{loc_min.pdf}
+    \caption{Lokale Minima}
+    \label{fig:localminima}
+  \end{center}
+\end{figure}
+
 
