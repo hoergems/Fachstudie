@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2011.1.13)  12 MAY 2012 19:45
+This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2011.1.13)  15 MAY 2012 17:46
 entering extended mode
-**D:/Dokumente*und*Einstellungen/Marcus/Eigene*Dateien/Studium/HS/Fachstudie/gi
-t/pythonstuff/Ausarbeitung/full/content/kapitel3.tex
+**D:/Dokumente*und*Einstellungen/Marcus/Eigene*Dateien/Studium/HS/Fachstudie/Au
+sarbeitung/full/content/kapitel3.tex
 
-("D:/Dokumente und Einstellungen/Marcus/Eigene Dateien/Studium/HS/Fachstudie/gi
-t/pythonstuff/Ausarbeitung/full/content/kapitel3.tex"
+("D:/Dokumente und Einstellungen/Marcus/Eigene Dateien/Studium/HS/Fachstudie/Au
+sarbeitung/full/content/kapitel3.tex"
 LaTeX2e <2009/09/24>
 Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
 rman, ngerman, german-x-2009-06-19, ngerman-x-2009-06-19, french, loaded.
@@ -20,10 +20,10 @@ End of file on the terminal!
  
 Here is how much of TeX's memory you used:
  7 strings out of 495285
- 443 string characters out of 3179824
+ 395 string characters out of 3179824
  45037 words of memory out of 3000000
  3306 multiletter control sequences out of 15000+200000
  3640 words of font info for 14 fonts, out of 3000000 for 9000
  14 hyphenation exceptions out of 8191
- 5i,0n,1p,265b,8s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 5i,0n,1p,249b,8s stack positions out of 5000i,500n,10000p,200000b,50000s
 !  ==> Fatal error occurred, no output PDF file produced!

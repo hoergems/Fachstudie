@@ -75,6 +75,14 @@ Für den Fall, dass eine weitere Orientierung mit der Gradientenlänge $m_i > 0,
 existiert; wie es bei Eckpunkten häufig der Fall ist; wird an der Stelle $(x, y)$ ein weiterer Merkmalspunkt mit der Hauptorientierung $(m_i, \theta_i)$ erstellt.
 
 \section{Lokalisation der Merkmale im Suchbild}
+Wurden nun im ersten Schritt die robusten Merkmale des gesuchten Objekts extrahiert, können diese im Suchbild wiedererkannt werden.
+Dies geschieht, in dem man die extrahierten Merkmale des Objekts mit denen im Suchbild auf Übereinstimmung hin untersucht.
+Dafür existieren verschiedene Ansätze.
+\subsection{Merkmalsvergleich anhand des eukllidischen Abstands}
+Der einfachste Ansatz zwei Deskriptoren miteinander zu Vergleichen, ist die Bestimmung des euklidischen Abstands der Merkmalsvektoren
+\begin{equation*}
+e = \sqrt{\sum_{i = 1}^{n}(V_{1i} - V_{2i})}
+\end{equation*}
 \label{sec:mf}
 Mathematische Formeln kann man $so$ setzen. \texttt{symbols-a4.pdf} (zu finden auf \url{http://www.ctan.org/tex-archive/info/symbols/comprehensive/symbols-a4.pdf}) enthält eine Liste der unter LaTeX direkt verfügbaren Symbole. z.\,B.\ $\mathbb{N}$ für die Menge der natürlichen Zahlen. Für eine vollständige Dokumentation für mathematischen Formelsatz sollte die Dokumentation zu \texttt{amsmath}, \url{ftp://ftp.ams.org/pub/tex/doc/amsmath/} gelesen werden.
 
