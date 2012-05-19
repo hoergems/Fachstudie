@@ -110,11 +110,11 @@ Eine sehr einfache und effiziente Möglichkeit Kreise in einem Canny-Edge Bild z
 \caption{Algorithmus in Pseudocode}
 \label{alg:sample}
 \begin{algorithmic}
-\Procedure{FindHoles}{$img$,$radius$, $tolerance$}
+\Procedure{FindHoles}{$img$, $radius$, $tolerance$}
 \ForAll{Pixel $p \in img$}
   \If{$p$ ist weiß}
-    \State Folge der zugehörigen weißen Linie $l$ ungefähr $n$ Schritte lang, wobei $n <= int(2*\pi*(radius+tolerance))$
-      \ForAll{Mittelpunkt $mp$}\Comment Geschätzt aus der Position von $p$
+    \State Folge der zugehörigen weißen Linie $l$ ungefähr $n$ Schritte lang, wobei $n <= int(2\cdot\pi\cdot(radius+tolerance))$
+      \ForAll{Mittelpunkte $mp$}\Comment Geschätzt aus der Position von $p$
         \If{$\exists lp \in l: $}
           \State bla             
         \EndIf
