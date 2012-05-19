@@ -100,4 +100,36 @@ Befindet sich bei der Suche das Template genau über der gesuchten Struktur, ist
   \end{center}
 \end{figure}
 
+\section{Einsatz der Houghtransformation zur Erkennung von Bohrpunkten}
+
+\section{Alternativer Algorithmus zur Erkennung von Bohrpunkten auf Grundlage einer Färbung}
+Die Houghtransformation für Kreise ist relativ rechenintensiv und schließlich muss der Akkumulatorraum noch ausgewertet werden. Auch das Templatematching arbeitet mit Filterkernen, die so groß sind wie die gesuchten Kreise. Dies motivierte dazu einen schnelleren Algorithmus zu entwickeln, zur Not auch auf Kosten der Universalität.
+Eine sehr einfache und effiziente Möglichkeit Kreise in einem Canny-Edge Bild zu finden ist die folgende:
+
+\begin{Algorithmus}
+\caption{Algorithmus in Pseudocode}
+\label{alg:sample}
+\begin{algorithmic}
+\Procedure{FindHoles}{$img$,$radius$, $tolerance$}
+\ForAll{Pixel $p \in img$}
+  \If{$p$ ist weiß}
+    \State Folge der zugehörigen weißen Linie $l$ ungefähr $n$ Schritte lang, wobei $n <= int(2*\pi*(radius+tolerance))$
+      \ForAll{Mittelpunkt $mp$}\Comment Geschätzt aus der Position von $p$
+        \If{$\exists lp \in l: $}
+          \State bla             
+        \EndIf
+      \EndFor
+  \EndIf
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{Algorithmus}
+
+\section{Einsatz der Houghtransformation zur Erkennung von Leiterbahnen}
+
+\section{Alternativer Algorithmus zu Erkennung von Leiterbahnen auf Grundlage einer Färbung}
+
+\section{Weiterer alternativer Algorithmus zu Erkennung von Leiterbahnen}
+
+
 
