@@ -73,7 +73,57 @@ Als Resultat des Verfahrens entsteht ein Bild, das eine Menge von Pixeln enthäl
 	\subsection {Floodfill-Algorithmus}
 Der Floodfill-Algorithmus ist bla..
 	\subsection {Houghtransformation}
+Die Houghtransformation baut auf der Kantendetektion auf: Sie sucht Formen, die von Kantenpunkten gebildet werden.
+Die Houghtransformation ist sehr allgemein verwendbar; Formen können im einfachsten Fall Geraden oder Kreise sein, es können aber auch Ellipsen und andere geometrische Figuren detektiert werden, es handelt sich bei der Houghtransformation also um eine \textbf{modellbasiertes} Verfahren.
+Mit der verallgemeinerten Houghtransformation können sogar beliebige Formen gefunden werden.
+Die Houghtransformation benutzt ein einfaches Grundprinzip: Man untersucht alle Kantenpunkte auf Hinweise auf eine gegebene Form, die man detektieren möchte. Diese Hinweise werden in einem Akkumulatorraum (Parameterraum) gespeichert. Nachdem alle Kantenpunkte untersucht wurden, wertet man die gesammelten Hinweise im Akkumulatorraum aus.
+Die Untersuchung der Kantenpunkte und die Dimension des Akkumulatorraums hängen dabei von der Form ab, die man detektieren will.
 		\subsubsection{Houghtransformation zur Erkennung von Geraden}
+			Wendet man auf ein Bild die üblichen Katenfilter an (Sobel-Operator, Canny-Edge-Detektor) zeigt sich, dass diese Verfahren zwar eine Menge von Punkten liefern, die auf Kanten, bzw. Geraden liegen, die Zusammenfassung dieser Punkte zu echten Kanten allerdings fehlt. Hier setzt die Houghtransformation an, indem es ein zusammenhängendes Geradenstück auf einen Punkt im Akkumulatorraum abbildet. \\
+Eine Gerade, beschrieben durch die Gleichung $y = mx + b$ würde also auf einen Punkt im zweidimensionalen Akkumulatorraum, der durch $m$ und $b$ aufgespannt wird, abgebildet werden. Dies hat jedoch den Nachteil, dass senkrechte Geraden eine unendliche Steigung haben, sodass diese nicht mehr korrekt in den Akkumulatorraum abgebildet werden können. \\
+Stattdessen verwendet man die Hessesche Normalform zur Darstellung der Geraden:
+\begin{equation*}
+r = x \cdot cos (\theta _0) + y \cdot sin (\theta _0) , \theta _0 \in [0, \pi [
+\end{equation*}
+
+Der zugehörige Akkumulatorraum $A$ wird damit von $\theta$ und $r$ aufgespannt.
+
+Zunächst wird das Ausgangsbild mit einem Kantendektektor gefiltert (z.B. mit dem Sobel-Filter), woraus sich eine Matrix der Gradientenstärke $G(x, y)$ und der Gradientenrichtung $\theta (x, y)$ berechnen lässt (siehe Canny-Edge-Detektor). \\
+Auf $G(x, y)$ wird nun ein Schwellwert $G^*$ angewandt, um die $N$ Pixel zu erhalten, die nicht durch kleinere Grauwertschwankungen im Ausgangsbild verursacht wurden.  Man erhält die Menge
+\begin{equation*}
+M = \left \{ (x_i, y_i, \theta _i) | G(x_i, y_i) \geq G^*, \theta _i=\theta (x, y), i = 1...N \right \}
+\end{equation*}
+
+aus Kantenpunkten und -richtungen. \\
+Im nächsten Schritt "Votiert" jedes Element $(x_i, y_i, \theta_i) \in M$ für einen Punkt $(\theta_i, r)$ im Akkumulatorraum, indem der Wert um 1 erhöht wird:
+\begin{itemize}
+\item $\forall (x_i, y_i \theta_i) \in M:$
+	\begin{enumerate}
+		\item $r = x_i \cdot cos(\theta_i) + y \cdot sin(\theta_i)$
+		\item {Erhoehe $(\theta_i, r_i)$ um 1}
+	\end{enumerate}
+\end{itemize}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=\textwidth]{akku.pdf}
+    \caption{Abbildung der Geraden in den Akkumulatorraum}
+    \label{fig:akku}
+  \end{center}
+\end{figure}
+
+Alle Punkte, die auf einer Geraden liegen, votieren somit für den gleichen Punkt in $A$. \\ 
+Allerdings werden Punkte einer Geraden aufgrund von Ungenauigkeiten nicht exakt für den selben Punkt $A(\theta_i, r_i)$ votieren, sondern einen Cluster bilden. Daher genügt es nicht, im Akkumulatorraum nach großen Werten zu suchen, sondern es ist zusätzlich eine Clusteranalyse notwendig, um alle Punkte auf der Geraden zu ''erwischen".
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=\textwidth]{akku_projection.pdf}
+    \caption{Dreiecksgeraden werden in den Akkumulatorraum projeziert}
+    \label{fig:akku_projection}
+  \end{center}
+\end{figure}
+ 
+
+			
 		\subsubsection{Houghtransformation Erkennung von Kreisen}
 
 	
