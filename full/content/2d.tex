@@ -101,35 +101,176 @@ Befindet sich bei der Suche das Template genau über der gesuchten Struktur, ist
 \end{figure}
 
 \section{Einsatz der Houghtransformation zur Erkennung von Bohrpunkten}
+Da gleichartige Bohrungen wohl auf der kompletten Platine den gleichen Radius (mit einer kleinen Toleranz) besitzen, kann auf 2d-Slices explizit nach Kreisen mit diesem Radius gesucht werden. Dies ergibt für Houghtransformation für Kreise mit Radius = 5 beispielsweise folgendes Bild im Akkumulatorraum:
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{houghkreiseakku.jpg}
+    \caption{Akkumulatorraum für Kreise mit Radius = 5}
+    \label{fig:houghkreiseakku}
+  \end{center}
+\end{figure}
+
+Da die Radien jedoch leicht schwanken, was insbesondere durch die geringe Auflösung bedingt ist, kann beispielsweise noch der Raum für Kreise mit Radius 4 hinzuaddiert werden, um ein klareres Bild zu erhalten. 
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{houghkreiseakku2.jpg}
+    \caption{Akkumulatorraum für Kreise mit r=4 und r=5}
+    \label{fig:houghkreiseakku2}
+  \end{center}
+\end{figure}
+
+In diesem Raum müssen nun die lokalen Maxima gefunden werden. Dies ist keine triviale Aufgabe, da ein lokales Maxima in einem anderen Bildbereich eher zum oberen Durchschnitt gehört. Es bietet sich hier der Einfachheit halber dennoch an, alle Pixel oberhalb eines Schwellwertes (z.B $0.6 \cdot globMax$) zu Clustern zusammenfassen und aus diesen jeweils den Mittelpunkt als Bohrung zu speichern. 
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=\textwidth]{canny_HoughRes.jpg}
+    \caption{Pixel mit höherem Wert als $0.6 \cdot globMax$}
+    \label{fig:houghkreiseakku2}
+  \end{center}
+\end{figure}
+
+Wendet man ein solches Schwellwertverfahren an, so müsste der Schwellwert heuristisch optimiert werden, um möglichst viele Punkte zu “erwischen”, da Bohrungen ohne umliegende Kanten (bspw. Isoliermaterial) generell schächer in den Akkumulatorraum abgebildet werden. \newline
+Um dieses Bild zu verbessern, hat man natürlich die Möglichkeit den Akkumulatorraum mit verschiedenen Filtern zu falten, um damit bspw. alle kreisförmigen Maxima zu verstärken. \newline
+Ansonsten könnte man beispielsweise verschiedene “Hill-Climbing”-Algorithmen einsetzen, wobei hier zu beachten ist, dass ein lokales Maximum nur dann als Hinweis für eine Bohrung interpretiert werden darf, wenn die Menge zusammenhängender, umgebender Pixel mit ähnlich hohem Wert lokal relativ beschränkt ist. Dadurch werden nur “punktförmige” Maxima gefunden.
 
 \section{Alternativer Algorithmus zur Erkennung von Bohrpunkten auf Grundlage einer Färbung}
 Die Houghtransformation für Kreise ist relativ rechenintensiv und schließlich muss der Akkumulatorraum noch ausgewertet werden. Auch das Templatematching arbeitet mit Filterkernen, die so groß sind wie die gesuchten Kreise. Dies motivierte dazu einen schnelleren Algorithmus zu entwickeln, zur Not auch auf Kosten der Universalität.
 Eine sehr einfache und effiziente Möglichkeit Kreise in einem Canny-Edge Bild zu finden ist die folgende:
-
-\begin{Algorithmus}
-\caption{Algorithmus in Pseudocode}
-\label{alg:sample}
+\newline
+%\begin{Algorithmus}
+%\caption{Algorithmus in Pseudocode}
+%\label{alg:sample}
 \begin{algorithmic}
-\Procedure{FindHoles}{$img$, $radius$, $tolerance$}
+\Procedure{FindHoles}{Bild $img$, Radius $r$, Toleranz $t$}
 \ForAll{Pixel $p \in img$}
   \If{$p$ ist weiß}
-    \State Folge der zugehörigen weißen Linie $l$ ungefähr $n$ Schritte lang, wobei $n <= int(2\cdot\pi\cdot(radius+tolerance))$
-      \ForAll{Mittelpunkte $mp$}\Comment Geschätzt aus der Position von $p$
-        \If{$\exists lp \in l: $}
-          \State bla             
+    \State Folge der zugehörigen weißen Linie $l$ ungefähr $n$ Schritte lang
+    \State , wobei $n <= int(2\cdot\pi\cdot(r+t))$
+      \ForAll{Mittelpunkte $mp$}\Comment Geschätzt aus der Position von $p$.
+        \If{$\exists lp \in l: dist(mp, lp) < r - t \lor dist(mp, lp) > r + t $}
+          \State Abbrechen             
+        \EndIf 
+        \If{Die Linie umschließt den Mittelpunkt (z.B. Quadrantencheck)}
+          \State l sei ein Kreis; continue in äußerer Schleife            
         \EndIf
       \EndFor
   \EndIf
 \EndFor
-\EndProcedure
+\EndProcedure \newline
 \end{algorithmic}
-\end{Algorithmus}
+%\end{Algorithmus}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=\textwidth]{canny2_PA1.jpg}
+    \caption{Ein Resultat des Algorithmus (gefundene Bohrungen sind rot markiert)}
+    \label{fig:b_alg_1}
+  \end{center}
+\end{figure}
+
+
+\subsection{Bewertung:}
+Der Algorithmus ist extrem schnell und erkannte in sämtlichen Testbildern ohne Probleme alle gesuchten Kreise. Falls die Kantendetektion einen Fehler gemacht hat und der Kreis eine kleinere Lücke beinhaltet, so wird der Kreis im allgemeinen dennoch erkannt (Falls die Lücke nicht zu groß ist). \newline
+Problematisch könnte selbstverständlich die Verallgemeinerung auf die gleichzeitige Suche von Kreisen beliebiger Radien werden. Diesbezüglich wurden noch keine Anstrengungen unternommen, da hierfür noch keine Notwendigkeit bestand.
 
 \section{Einsatz der Houghtransformation zur Erkennung von Leiterbahnen}
+Die Houghtransformation ist nicht direkt geeignet für das Erkennen von Leiterbahnen, da ausschließlich Geradenstücke erkannt werden. Aus Diesen lässt sich jedoch nicht schließen, ob es sich um eine Leiterbahn handelt oder nicht (es könnte z.B. auch Teil von Isoliermaterial sein). \newline
+Die Kurven der Bahnen werden nicht erkannt, somit müsste man die Geradenstücke manuell verlinken und anschließend noch jeweils 2 Kanten (Bahnränder) zu einer Leiterbahn zusammenfassen. Zudem müssten andere, im Bild vorkommende Geraden ausgeschlossen werden. \newline
+Dieses Anpassungsverfahren scheint also um relativ kompliziert zu sein, da es einfachere Wege gibt die Bahnen zu finden.  
 
 \section{Alternativer Algorithmus zu Erkennung von Leiterbahnen auf Grundlage einer Färbung}
+Bohrungen sind relativ einfach zu finden, weil es sich um einigermaßen simple geometrische Objekte handelt. Da alle Leiterbahnen schließlich in einer Bohrung enden, motiviert die Idee einen Algorithmus zu schreiben, der bei bereits erkannten Bohrungen prüft, ob eine Leiterbahn in sie mündet.\newline
+Ein Beispiel für einen solchen Algorithmus wäre folgendes Verfahren: \newline
+\begin{enumerate}
+\item Man zeichne einen Kreis $k1$, dessen Radius etwas größer ist als der Abstand vom Mittelpunkt der Bohrung bis zum äußeren Ende der umgebenden Isolierschicht. \newline
+Da die gefundenen Bohrpunkte nicht immer perfekt in der Mitte liegen, untersucht man auch die Umgebungen jedes Bohrpunktes.
+\item Falls in diesem Kreis ausgenommen von “weiß” und “schwarz” nur zwei Farben vorkommen, so weiß man, dass es sich entweder um eine Bohrung mit Leiterbahn handelt, oder aus Versehen eine “fremde” Region geschnitten wurde. 
+\item Betrachtet man das Vorkommen der selteneren Farbe in einem Kreis $k2$, dessen Radius etwas kleiner ist, als der Radius von $k1$, so kann man anhand eines einfachen Vergleichs des Mengenverhältnisses in $k1$ und $k2$ schätzen, dass es sich um ein Leiterbahn handeln kann. \newline
+Dies liegt daran, dass die Farbe der Leiterbahn in beiden Kreisen in ungefähr gleich vielen Pixeln auftauchen muss (im inneren Kreis evtl. etwas häufiger).
+\end{enumerate}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=\textwidth]{canny2_FACA1_test.jpg}
+    \caption{Eingezeichnete Kreise (bei roten Kreisen ist bereits das Kriterium aus Schritt zwei verletzt.)}
+    \label{fig:l_alg_1_test}
+  \end{center}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=\textwidth]{canny2_FACA1.jpg}
+    \caption{Ein Resultat des Algorithmus (gefundene Leiterbahnen sind schwarz markiert)}
+    \label{fig:l_alg_1}
+  \end{center}
+\end{figure}
+
+\subsection{Bewertung:}
+Der Algorithmus relativ schnell, da er nur die bereits gegebenen Bohrungen untersucht und nicht daher nicht das komplette Bild durchforstet. \newline
+Gegenüber Fehlern im “Canny”-Bild ist der Algorihtmus nur insofern robust wie es der verwendete Färbealgorithmus ist. \newline
+Problematisch ist natürlich auch hier, dass der Algorithmus speziell auf das Problem zugeschnitten wurde und daher an Universalität einbüßt.
 
 \section{Weiterer alternativer Algorithmus zu Erkennung von Leiterbahnen}
+Da der vorherige Algorithmus von Robustheit des Färbealgorithmus abhängt und daher im Allgemeinen anfällig ist für Fehler des Canny-Edge-Detektors, wäre ein Algorithmus interessant, welcher ohne Färbung auskommt. \newline
+Da die Bohrungen bisher zuverlässig erkannt wurden und es das Verfahren extrem beschleunigt, soll auch hier wieder von den gefundenen Bohrungen ausgegangen werden. \newline
+Der hier vorgeschlagene, auf das Problem abgestimmte Algorithmus sucht im Wesentlichen die Kante(n) einer eventuellen Leiterbahn und untersucht ihr Verhalten bezüglich der Umrundung des Bohrpunktes: \newline
 
+\begin{enumerate}
+\item Man zeichne wieder einen Kreis, dessen Radius etwas größer ist als der Abstand vom Mittelpunkt der Bohrung bis zum äußeren Ende der umgebenden Isolierschicht. \newline
+Da die gefundenen Bohrpunkte nicht immer perfekt in der Mitte liegen, untersucht man auch die Umgebungen jedes Bohrpunktes.
+\item Falls es auf dem Kreis genau zwei weiße Cluster gibt und deren euklidischer Abstand im Toleranzbereich der Breite einer Leiterbahn liegt, so kann man sagen, dass es sich entweder um die beiden Seiten der Leiterbahn handelt oder keine Leiterbahn von der Bohrung ausgeht und zufällig zwei fremde Punkte mit dem richtigen Abstand gefunden wurden.
+\item Um letzteren Fall mit hoher Wahrscheinlichkeit auszuschließen könnte man beispielsweise jeweils der zugehörigen weißen Linie eines Clusters folgen und schließlich untersuchen, ob die Vereinigung der beiden Linien den Bohrpunkt umrundet (bspw. Quadrantencheck: Liegen in jedem Quadranten um den Bohrpunkt min. x Pixel?).
+\end{enumerate}
 
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{CA1.png}
+    \caption{Beispiel zu Verdeutlichung: Der in Schritt 1 gezeichnete Kreis ist blau; Die gefundenen Cluster sind gelb; Der gemessene Abstand ist braun; Die Vereinigung der beiden Linien grün.}
+    \label{fig:l_alg_1}
+  \end{center}
+\end{figure}
 
+Um nun die tatsächliche Leiterbahn zu extrahieren könnte man beispielsweise den Floodfill Algorithmus der braunen Linie im Bild starten und somit alle Pixel der Leiterbahn zu finden. Das würde jedoch dem Vorhaben widersprechen, ohne Färbung und der damit verbunden, bereits angesprochenen Schwäche auszukommen. \newline
+Daher bietet es sich beispielsweise folgendes Verfahren zur Extraktion der Leiterbahnen an (Die Leiterbahnen machen keine scharfen Kurven): \newline
+
+\begin{enumerate}
+\item Man schießt einen Strahl, ausgehend vom Bohrpunkt in Richtung Leiterbahn, dh. durch die Mitte der gezeichneten, braunen Linie.
+\item Der Strahl wird am Punkt p gestoppt, und zwar $n$ Pixel vor einer weißen Linie.
+\item Anschließend vergleicht man $n$ mit $n_{links}$ und $n_{rechts}$, welche entstehen, wenn man, anstatt von p geradeaus zu gehen um um $45^\circ$ nach links bzw. nach rechts geht. 
+\item Den längsten der drei Wege wählt man als neuen Startweg, halbiert den Winkel und macht weiter bei Schritt 3. Durch diesen Trick wird bei den Leiterbahnen für jeden aktuellen Punkt p der längste Weg in die richtige Richtung gefunden (siehe nachfolgende Grafik).
+\item Wenn man den längsten Strahl ausgehend vom Punkt p gefunden hat, dann wird p neu gesetzt, indem man mit diesem Strahl wieder bei Schritt 2 weitermacht. Falls kein neuer Strahl gefunden wurde ist man fertig.
+\end{enumerate}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.7\textwidth]{LinienpunkteMuster.png}
+    \caption{Zwei Iterationsschritte zu Verdeutlichung: Der grüne Weg ist jeweils der längste und wird daher als Ausgangsrichtung für die nächste Winkelhalbierung gesetzt.}
+    \label{fig:linepoints}
+  \end{center}
+\end{figure}
+
+Dieses Vorgehen führt dazu, kleinere Lücken im Kantenbild mit einigermaßen hoher Wahrscheinlichkeit übersprungen werden, insbesondere dann, wenn sie auf einem langen, geradlinigen Abschnitt auftauchen. Dieser Vorteil ist im folgenden Bild zu sehen, in welchem auch die Leiterbahn gefunden wurde, welche beim vorherigen Verfahren aufgrund der fehlerhaften Färbung nicht erkannt wurde.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=\textwidth]{canny2_CA1_Circuits.jpg}
+    \caption{Ein Resultat des Algorithmus (gefundene Leiterbahnen sind rot markiert). Es wurden zusätzlich Leiterbahnen, welche zwischen zwei Bohrungen verlaufen kombiniert.}
+    \label{fig:linepoints2}
+  \end{center}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=\textwidth]{canny_CA1_Circuits.jpg}
+    \caption{Ein anderes Resultat des Algorithmus (gefundene Leiterbahnen sind rot markiert). Außerdem wurden Leiterbahnen, welche zwischen n Bohrungen verlaufen zu einem Graph kombiniert.}
+    \label{fig:linepoints22}
+  \end{center}
+\end{figure}
+
+\subsection{Bewertung:}
+Durch die beidseitige Verfolgung der von den Clustern ausgehenden Linien und dem anschließenden Check deren Vereinigung bezüglich dem Quadrantenkriterium hat sich das Verfahren für die Erkennung von Leiterbahnen auch bei Lücken im Canny-Edge-Bild bewährt. \newline
+Das Verfahren zur nachfolgenden Extraktion der Leiterbahnen hat in den getesteten Szenarien gut funktioniert und ist einigermaßen einfach zu implementieren. \newline
+Wenn ein Strahl jedoch zufällig durch eine Lücke im Kantenbild springt, dann hat das unabsehbare Konsequenzen und die Leiterbahn muss aus der Liste gestrichen werden. Ersteres ist wiederum einem Algorithmus nicht auf trivialem Wege ersichtlich und diesbezüglich müssen weitere Anstrengungen unternommen werden. \newline
+Auch dieser Algorithmus ist extrem schnell und dürfte keinerlei Performanz-Probleme bereiten. 
