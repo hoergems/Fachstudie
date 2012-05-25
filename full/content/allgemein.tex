@@ -71,7 +71,26 @@ Als Resultat des Verfahrens entsteht ein Bild, das eine Menge von Pixeln enthäl
 
 
 	\subsection {Floodfill-Algorithmus}
-Der Floodfill-Algorithmus ist bla..
+Floodfill ist ein Algorithmus, der in multi-dimensionalen Arrays zusammenhängende Felder erkennen und färben kann. Ob Felder zusammenhängen ist abhängig davon ob sie identische Eigenschaften aufweisen. Bei zweidimensionalen Bilddaten wird dafür die Farbe der Pixel verwendet. Ausgehend von einem Startpunkt durchsucht der Algorithmus “flutartig” das Array und ändert die Suchrichtung, sobald eine Eigenschaft nicht mehr erfüllt ist. \\
+Der Algorithmus betrachtet ausgehend von einem Startpunkt rekursiv alle benachbarten Felder und färbt diese gegebenenfalls. Ausgehend davon wie viele der Nachbarfelder betrachtet werden spricht man z.B. im zweidimensionalen von “fill4” (oben, unten, links, rechts) oder “fill8” (alle Nachbarn). \\ \\
+Alle eingesetzten Verfahren arbeiten auf dem Resultat eines Canny-Edge-Detektors. Zusätzlich wurde bei den Verfahren, die auf einem gefärbten Bild arbeiten, eine Färbung zusammenhängender schwarzer Flächen nach folgendem Prinzip durchgeführt: \\
+
+\begin{lstlisting}
+for x in xrange(0, width, 3):   # stepsize ist 3
+	for y in xrange(0, height, 3):
+		fill8(img, x, y, (0,0,0), randomColor, resimg)
+\end{lstlisting}
+
+Der implementierte "fill8"-Algorithmus entspricht dem Floodfill-Algorithmus mit einer 8-Pixel Nachbarschaft, welcher im vorigen Abschnitt beschrieben wurde. Dabei wurde der Algorithmus derart modifiziert, dass zuerst in der 8er-Umgebung geprüft wurde ob ein weißer Pixel an den zu untersuchenden Pixel angrenzt und anschließend die 4er-Umgebung auf den Stack gelegt wurde, falls die Prüfung negativ ausgefallen ist. Durch diesen Trick wird verhindert, dass der Algorithmus durch kleinere Lücken (bis 2 Pixel) des Canny-Bildes, welche aufgrund von von fehlerhafter Erkennung entstehen, nicht hindurch läuft.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{floodfill.png}
+    \caption{fill4 färbt ausgehend vom Mittelpunkt die zentrale, weiße Fläche.}
+    \label{fig:floodfill}
+  \end{center}
+\end{figure}
+
 	\subsection {Houghtransformation}
 Die Houghtransformation baut auf der Kantendetektion auf: Sie sucht Formen, die von Kantenpunkten gebildet werden.
 Die Houghtransformation ist sehr allgemein verwendbar; Formen können im einfachsten Fall Geraden oder Kreise sein, es können aber auch Ellipsen und andere geometrische Figuren detektiert werden, es handelt sich bei der Houghtransformation also um eine \textbf{modellbasiertes} Verfahren.
