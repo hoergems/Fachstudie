@@ -13,12 +13,60 @@ Da der gescannte Mikrochip aus vier Leiterbahnschichten besteht, muss der beim S
   \end{center}
 \end{figure}
 Ziel der unten vorgestellten Verfahren besteht darin, um für jedes Intervall das Bild zu finden, dass die Leiterbahnschicht am genausten repräsentiert.
-Die aus den Verfahren gewonnen Bilder werden anschließend weiterverwendet, d.h. es werden die 2D Objekterkennungsverfahren darauf angewandt und bewertet, wie gut die ausgewählten Bilder für die einzelnen Verfahren geeignet sind, und ob für jedes Intervall tatsächlich das am besten detektierbare Bild gefunden wurde.
+Die aus den Verfahren gewonnen Bilder werden anschließend weiterverwendet, d.h. es werden die 2D Objekterkennungsverfahren darauf angewandt und bewertet, wie gut die ausgewählten Bilder für die einzelnen Verfahren geeignet sind, und ob für jedes Intervall tatsächlich das am besten detektierbare Bild gefunden wurde.\\ \\
+
+Um die aufgeführten Verfahren miteinander vergleichen zu können, wird für jedes Intervall das "Best Match" vor dem Vergleich ausgewählt. Dabei handelt es sich um jenes Bild, in dem die Objekte am besten sichtbar sind. Für die vier Intervalle sind dies folgende Bilder:
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{best1.pdf}
+    \caption{Best Match des ersten Intervalls}
+    \label{fig:bestmatch1}
+  \end{center}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{best2.pdf}
+    \caption{Best Match des zweiten Intervalls}
+    \label{fig:bestmatch2}
+  \end{center}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{best3.pdf}
+    \caption{Best Match des dritten Intervalls}
+    \label{fig:bestmatch3}
+  \end{center}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{best4.pdf}
+    \caption{Best Match des vierten Intervalls}
+    \label{fig:bestmatch4}
+  \end{center}
+\end{figure}
+
+Die Ergebnisse der einzelnen Verfahren werden mit diesen Best Matches verglichen, indem die durschnittliche Distanz der Ergebnisse zu den Best Matches im Bilderstack ermittelt wird. 
 
 \section{Binärbilder}
 Bei diesem Verfahren werden zunächst alle Bilder in Binärbilder umgewandelt. Als binärer Schwellwert wird dabei der Wert 70 gewählt, d.h. alle Pixel, deren Grauwert größer als 70 ist, wird der Grauwert 255 zugewiesen, allen Pixeln die einen Grauwert kleiner, bzw. gleich 70 besitzen, wird der Grauwert 0 zugewiesen. Anschließend wird das Bild ausgewählt, welches die maximale Anzahl an weißen Pixeln (Pixel mit dem Grauwert 255) besitzen.
 
-Die Idee, die hinter diesem Verfahren steckt ist, dass Bilder, die eine möglichst große Anzahl von Pixeln mit maximalen Grauwert besitzen, viele Objekte enthalten, die detektiert werden können.
+Die Idee, die hinter diesem Verfahren steckt ist, dass Bilder, die eine möglichst große Anzahl von Pixeln mit maximalen Grauwert besitzen, viele Objekte enthalten, die detektiert werden können. \\
+
+Die Ergebnisse des Verfahrens für die vier Intervalle:
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{binary_max.pdf}
+    \caption{Best Match des vierten Intervalls}
+    \label{fig:bestmatch4}
+  \end{center}
+\end{figure}
+
+\paragraph{Ergebnis}
+
 
 \section{Canny-Edge-Bilder}
 Bei diesem Verfahren werden die einzelnen Bilder der Intervalle zunächst mit dem Canny-Edge Operator in die entsprechenden Kantenbilder überführt. Anschließend werden die Kantenpixeln in den Kantenbildern gezählt, wobei für jedes Intervall das Bild ausgewählt wird, dass die meisten Kantenpixel besitzt.\\
