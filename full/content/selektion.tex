@@ -49,6 +49,14 @@ Um die aufgeführten Verfahren miteinander vergleichen zu können, wird für jed
   \end{center}
 \end{figure}
 
+Diese Best Matches haben im Bilderstack jeweils die Indizes
+\begin{enumerate}
+	\item{Intervall 1: $Index 27$}
+	\item{Intervall 2: $Index 61$}
+	\item{Intervall 3: $Index 83$}
+	\item{Intervall 4: $Index 96$}
+\end{enumerate}
+
 Die Ergebnisse der einzelnen Verfahren werden mit diesen Best Matches verglichen, indem die durschnittliche Distanz der Ergebnisse zu den Best Matches im Bilderstack ermittelt wird. 
 
 \section{Binärbilder}
@@ -56,16 +64,26 @@ Bei diesem Verfahren werden zunächst alle Bilder in Binärbilder umgewandelt. A
 
 Die Idee, die hinter diesem Verfahren steckt ist, dass Bilder, die eine möglichst große Anzahl von Pixeln mit maximalen Grauwert besitzen, viele Objekte enthalten, die detektiert werden können. \\
 
+\subsection{Ergebnis} 
+
 Die Ergebnisse des Verfahrens für die vier Intervalle:
 \begin{figure}[H]
   \begin{center}
     \includegraphics[width=0.9\textwidth]{binary_max.pdf}
-    \caption{Best Match des vierten Intervalls}
-    \label{fig:bestmatch4}
+    \caption{Ergebnisse des Binärbildverfahrens}
+    \label{fig:binary_bestmatch4}
   \end{center}
 \end{figure}
 
-\paragraph{Ergebnis}
+Für die einzelnen Intervalle  sind dies die Bilder mit folgenden Indizes:
+\begin{enumerate}
+	\item{Interval l1: $Index$ $9$ , Differenz zum Best Match: 18}
+	\item{Intervall 2: $Index$ $59$, Differenz zum Best Match: 2}
+	\item{Intervall 3: $Index$ $82$, Differenz zum Best Match: 1 }
+	\item{Intervall 4: $Index$ $98$, Differenz zum Best Match: 2}
+\end{enumerate}
+
+Dies führt zu einer durchschnittlichen Distanz von \textbf{5,75} vom Best Match.
 
 
 \section{Canny-Edge-Bilder}
@@ -73,12 +91,64 @@ Bei diesem Verfahren werden die einzelnen Bilder der Intervalle zunächst mit de
 
 Der Ansatz hierbei ist, dass Bilder, die viele einzelne Objekte enthalten, mehr Kantenpixel liefern, als Bilder, in denen wenige Objekte enthalten sind.
 
-\section{Hough-Transformation}
+\subsection{Ergebnis} 
 
-\section{Lokaler Kontrast}
-\begin{equation*}
-c_{loc} = \frac{1}{M \cdot N}\sum_{x}^{{}} \sum_{y}^{{}} \left | g(x, y) - \frac{1}{4} \sum_{(x', y') \epsilon N_4(x, y))}^{{}} g(x', y') \right |
-\end{equation*}
-	
+Die Ergebnisse des Verfahrens für die vier Intervalle:
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{canny_max_results.pdf}
+    \caption{Ergebnisse des Canny-Edge-Verfahrens}
+    \label{fig:canny_bestmatch4}
+  \end{center}
+\end{figure}
+
+Die zugehörigen Katenbilder:
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{canny_max_canny_results.pdf}
+    \caption{Kantenbilder der Ergebnisse des Canny-Edge-Verfahrens}
+    \label{fig:canny_max_bestmatch4}
+  \end{center}
+\end{figure}
+
+Für die einzelnen Intervalle sind dies die Bilder mit folgenden Indizes:
+\begin{enumerate}
+	\item{Intervall 1: $Index$ $27$, Differenz zum Best Match: 0}
+	\item{Intervall 2: $Index$ $60$, Differenz zum Best Match: 1}
+	\item{Intervall 3: $Index$ $83$, Differenz zum Best Match: 0}
+	\item{Intervall 4: $Index$ $95$, Differenz zum Best Match: 1}
+\end{enumerate}
+
+Dies führt zu einer durchschnittlichen Distanz von \textbf{0,5} vom Best Match.
+
+
+\section{Hough-Transformation}
+Dieses Verfahren ziehlt darauf ab, die Bilder in den Intervallen zu finden, die möglichst gut detektierbare Kantenverläufe, und somit möglichst gut erkennbare Leiterbahnen enthalten. \\
+Dafür werden aus den Bildern mit Hilfe der Houghtransformation die Kanten extrahiert und anschließend gezählt. Das Maximum für jedes Intervall ist jenes Bild, welches die meisten zählbaren Kanten enthält.
+
+\subsection{Ergebnis} 
+
+Die Ergebnisse des Verfahrens für die vier Intervalle:
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{hough_max.pdf}
+    \caption{Ergebnisse des Houghtransformationsverfahrens}
+    \label{fig:hough_bestmatch4}
+  \end{center}
+\end{figure}
+
+Für die einzelnen Intervalle sind dies die Bilder mit folgenden Indizes:
+\begin{enumerate}
+	\item{Intervall 1: $Index$ $26$, Differenz zum Best Match: 1}
+	\item{Intervall 2: $Index$ $60$, Differenz zum Best Match: 1}
+	\item{Intervall 3: $Index$ $83$, Differenz zum Best Match: 0}
+	\item{Intervall 4: $Index$ $95$, Differenz zum Best Match: 1}
+\end{enumerate}
+
+Dies führt zu einer durchschnittlichen Distanz von \textbf{0,75} vom Best Match.
+
+\section{Vergleich}
+Es ist deutlich zu erkennen, dass das Binärbildverfahren deutlich schlechtere Ergebnisse (durchschnittliche Distanz: $5,75$) liefert, als das Canny-Edge-Verfahren (durchschnittliche Distanz: $0,5$) und das Houghtransformationsverfahren (durchschnittliche Distanz: $0,75$). Dies liegt vor allem daran, das Störpixel, bzw. für die weitere Verarbeitung irrellevante Informationen in Form von nicht defninierten Objekten einen starken Einfluss auf die Menge der weißen Pixel nehmen. Beim Canny-Edge-Verfahren werden primär "echte" Objekte, also Objekte, die aus zusammenhängenden Kanten bestehen extrahiert, während Störpixel ber der Überführung der Bilder in Kantenbilder gefiltert werden. \\
+Ein minimal schlechteres Ergebniss liefert das Houghtransformationsverfahren, da dieses Verfahren eine gute detektierbarkeit der Leiterbahnen berücksichtigt, Bohrpunkte allerdings außer Acht lassen.
 
 
