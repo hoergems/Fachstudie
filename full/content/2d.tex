@@ -3,7 +3,7 @@
 
 \chapter{2D - Verfahren}
 \label{chap:2d}
-	\section{SIFT/SURF}
+	\section{SIFT}
 		SIFT (Scale-invariant feature transform) ist ein von David Lowe 1999 vorgestelltes Verfahren zur Extraktion von lokalen Merkmalen aus Bildern. Die mit diesem Verfahren gefundene Merkmale haben die Eingeschaft, dass sie robust gegenüber Rotation, Translation und Skalierung sind, und damit zuverlässig in anderen Bilder wiedererkannt werden können.
 Um Objekte in Bildern mit SIFT erkennen und lokalisieren zu können, sind also zwei Schritte nötig:
 \begin{enumerate}
@@ -75,6 +75,52 @@ Der einfachste Ansatz zwei Deskriptoren miteinander zu Vergleichen, ist die Best
 \begin{equation*}
 e = \sqrt{\sum_{i = 1}^{n}(V_{1i} - V_{2i})}
 \end{equation*}
+
+\section{Einsatz von SURF zur Erkennung von Bohrpunkten}
+Um in den Beispieldatensätzen Bohrpunkte auf möglichst effiziente Art und Weise erkennen zu können, wird hier SURF ($Speeded Up Robust Features$), eine leicht veränderte Variante des SIFT-Verfahrens, verwendet. \\
+Der Unterschied zum hier vorgestellen SUFT Verfahrens besteht darin, dass statt der Gaußfilter Mittelwertfilter zum Einsatz kommen. Dadurch wird das Verfahren signifikant beschleunigt, ohne die Erkennungsrate nennenswert zu beeinflussen. \cite{Bay2005} \\
+
+Um Bohrpunkte mithilfe des SURF Verfahrens zu detektieren, wird zunächst ein Modell des Bohrpunktes auf dessen Merkmale hin untersucht. Dazu wird ein Template eines Bohrpunktes aus einem Bild im Bilderstack ausgeschnitten.
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{sift_template.pdf}
+    \caption{Modell eines Bohrpunktes (Vergrößert)}
+    \label{fig:sift_template}
+  \end{center}
+\end{figure}
+
+
+Auf dieses Template wird nun der besprochene SURF Algorithmus angewandt, um die Merkmalsvektoren des Bohrpunktes zu extrahieren.
+Das Template wurde dabei bewusst so klein gewählt, dass das Verfahren genau einen Merkmalsvektor liefert, welcher den Bohrpunkt repräsentiert:
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{template_merkmal.pdf}
+    \caption{Bohrpunkt mit eingezeichnetem Merkmalsvektor (Vergrößert)}
+    \label{fig:template_merkmal}
+  \end{center}
+\end{figure}
+
+Im nächsten Schritt werden die Merkmalsvektoren im Suchbild extrahiert, wobei wieder der SURF-Algorithmus zum Einsatz kommt, und eine Liste mit Merkmalsvektoren liefert. Zur Illustration werden auch hier die Orte der Merkmalsvektoren in das Suchbild gezeichnet:
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{keypoints.pdf}
+    \caption{Suchbild mit eingezeichneten Merkmalsvektoren}
+    \label{fig:suchbild_merkmal}
+  \end{center}
+\end{figure}
+
+Anschließend wird für den Merkmalsvektor des Templates nach Übereinstimmungen in der Liste der Merkmalsvektoren des Suchbildes gesucht, d.h. es wird nach Merkmalsvektoren gesucht, die dem des Templates möglichst ähnlich sind. Ähnlich bedeutet hier, dass die Komponenten zweier Merkmalsvektoren eine hohe Übereinstimmung haben, was genau dann der Fall ist, wenn beide Merkmalsvektoren einen geringen Abstand im Merkmalsraum haben. \\
+Daher wird der euklidische Abstand des Merkmalsvektors des Templates mit jedem Merkmalsvektor der Liste berechnet. Ist der Abstand dabei kleiner als $0,45$ im Merkmalsraum, wird eine Übereinstimmung der beiden Merkmalsvektoren angenommen.\\
+Dabei werden folgende übereinstimmende Merkmalsvektoren gefunden:
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{matches.pdf}
+    \caption{Suchbild mit eingezeichneten übereinstimmenden Merkmalsvektoren}
+    \label{fig:suchbild_merkmal_matches}
+  \end{center}
+\end{figure}
+
+ 
 
 \section{Template Matching}
 	Template Matching ist ein Verfahren, bei dem ein prototypisches Modell einer Struktur im Bild gesucht wird. Das Template ist dabei selbst ein kleines Bild, welches wie ein Filterkern über das Bild wandert.
