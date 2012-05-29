@@ -69,6 +69,18 @@ Als Resultat des Verfahrens entsteht ein Bild, das eine Menge von Pixeln enthäl
   \end{center}
 \end{figure}
 
+\subsection {Posterisation}
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{posterization.png}
+    \caption{Posterisation eines 2D-Slices}
+    \label{fig:posterization1}
+  \end{center}
+\end{figure}
+
+Posterisierte Bilder benutzen eine eingeschränkte Farbpalette. Es gibt keine kontinuierlichen Farbverläufe, alle Farbübergänge sind abrupt. Durch Posterisation können die Bilddaten für die Objekterkennung vorbereitet werden. So kann beispielsweise durch ein einfaches Template-Matching nach Objekten gesucht werden. \\
+Durch die Eigenschaften der Slices bietet sich die Posterisation als Verfahren für die Separation von Objekten und Hintergrund an. So können beispielsweise auf qualitativ guten Slices nach der Posterisation durch ein einfaches Template Matching die meisten Bohrpunkte erkannt werden. \\
+Das große Problem der Posterisation sind die nicht perfekten Scans. Die Platinen liegen meistens nicht perfekt ausgerichtet in der Aufnahme und somit kommt es vor allem im idealerweise gleichmäßigen Hintergrund zu leichten Artefakten wie z.B. Farbverläufen, die die Posterisation so stark stören, dass das Ergebnis häufig nicht sinnvoll weiterverwerdent werden kann.
 
 	\subsection {Floodfill-Algorithmus}
 Floodfill ist ein Algorithmus, der in multi-dimensionalen Arrays zusammenhängende Felder erkennen und färben kann. Ob Felder zusammenhängen ist abhängig davon ob sie identische Eigenschaften aufweisen. Bei zweidimensionalen Bilddaten wird dafür die Farbe der Pixel verwendet. Ausgehend von einem Startpunkt durchsucht der Algorithmus “flutartig” das Array und ändert die Suchrichtung, sobald eine Eigenschaft nicht mehr erfüllt ist. \\
