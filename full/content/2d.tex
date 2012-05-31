@@ -4,7 +4,8 @@
 \chapter{2D - Verfahren}
 \label{chap:2d}
 	\section{SIFT}
-		SIFT (Scale-invariant feature transform) ist ein von David Lowe 1999 vorgestelltes Verfahren zur Extraktion von lokalen Merkmalen aus Bildern. Die mit diesem Verfahren gefundene Merkmale haben die Eingeschaft, dass sie robust gegenüber Rotation, Translation und Skalierung sind, und damit zuverlässig in anderen Bilder wiedererkannt werden können.
+\cite{Lowe2004} \\
+		SIFT (Scale-invariant feature transform) ist ein von David Lowe 1999 vorgestelltes Verfahren zur Extraktion von lokalen Merkmalen aus Bildern. Die mit diesem Verfahren gefundene Merkmale haben die Eingeschaft, dass sie robust gegenüber Rotation, Translation und Skalierung sind, und damit zuverlässig in anderen Bilder wiedererkannt werden können. \\
 Um Objekte in Bildern mit SIFT erkennen und lokalisieren zu können, sind also zwei Schritte nötig:
 \begin{enumerate}
 	\item Extraktion und Beschreibung von Merkmalen (Features) des gesuchten Objekts
@@ -68,10 +69,8 @@ Für den Fall, dass eine weitere Orientierung mit der Gradientenlänge $m_i > 0,
 existiert; wie es bei Eckpunkten häufig der Fall ist; wird an der Stelle $(x, y)$ ein weiterer Merkmalspunkt mit der Hauptorientierung $(m_i, \theta_i)$ erstellt.
 \subsection{Lokalisation der Merkmale im Suchbild}
 Wurden nun im ersten Schritt die robusten Merkmale des gesuchten Objekts extrahiert, können diese im Suchbild wiedererkannt werden.
-Dies geschieht, in dem man die extrahierten Merkmale des Objekts mit denen im Suchbild auf Übereinstimmung hin untersucht.
-Dafür existieren verschiedene Ansätze.
-	\subsubsection{Merkmalsvergleich anhand des eukllidischen Abstands}
-Der einfachste Ansatz zwei Deskriptoren miteinander zu Vergleichen, ist die Bestimmung des euklidischen Abstands der Merkmalsvektoren
+Dies geschieht, in dem man die extrahierten Merkmale des Objekts mit denen im Suchbild auf Übereinstimmung hin untersucht. \\
+Der dafür am häufigsten verwendete Ansatz ist der vergleich anhand des euklidischen Abstands der Merkmalsvektoren.
 \begin{equation*}
 e = \sqrt{\sum_{i = 1}^{n}(V_{1i} - V_{2i})}
 \end{equation*}
@@ -162,6 +161,28 @@ Befindet sich bei der Suche das Template genau über der gesuchten Struktur, ist
     \label{fig:localminima}
   \end{center}
 \end{figure}
+
+Um die genaue Position der Bohrpunkte zu ermitteln, müssen diese Minima detektiert werden.\\
+Der einfachste Ansatz dafür, ist ein Schwellwert zu benutzen, sodass nach der Schwellwertbildung lediglich die lokalen Minima übrig bleiben.
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{template_matches.pdf}
+    \caption{Lokale Minima nach der Schwellwertbildung}
+    \label{fig:localminima_threshold}
+  \end{center}
+\end{figure}
+
+Ein Problem bei diesem Verfahren ist, den richtigen Schwellwert zu treffen. Ein zu niedriger Schwellwert lässt die lokalen Minima verschwinden. Ein zu hoher Schwellwert führt zu einem "auslaufen" der lokalen Minima in die angrenzenden Regionen.
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{template_threshold.pdf}
+    \caption{Auslaufen der lokalen Minima bei zu hohem Schwellwert}
+    \label{fig:localminima_threshold_bad}
+  \end{center}
+\end{figure}
+
+Dieser Umstand macht eine automatisierte Suche nach den lokalen Minima schwierig und für die hier betrachteten Daten ungeeignet.
+
 
 \section{Einsatz der Houghtransformation zur Erkennung von Bohrpunkten}
 Da gleichartige Bohrungen wohl auf der kompletten Platine den gleichen Radius (mit einer kleinen Toleranz) besitzen, kann auf 2d-Slices explizit nach Kreisen mit diesem Radius gesucht werden. Dies ergibt für Houghtransformation für Kreise mit Radius = 5 beispielsweise folgendes Bild im Akkumulatorraum:

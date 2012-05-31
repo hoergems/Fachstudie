@@ -5,6 +5,7 @@
 \label{chap:k3}
 Die Allgemeinen Verfahren sind unterstützende Algorithmen mit denen die zu analysierenden Daten für komplexere Erkennungsverfahren vorverarbeitet werden. Meistens filtern sie unnötige oder störende Informationen heraus oder modifizieren die Daten so, dass sich die zu erkennenden Objekte besser von den unbrauchbaren Daten abheben.
 	\subsection {Canny-Edge-Detektor}
+\cite{Canny1986}
 		Der Canny-Edge Operator is ein von John Canny 1986 entwickelter Algorithmus zur Kantendetektion. Er liefert für ein Grauwertbild idealerweise alle zusammenhängenden Kanten. Der Algorithmus gliedert sich dabei im Wesentlichen in zwei Schritte:
 \begin{enumerate}
 	\item Kantenhervorhebung
@@ -104,6 +105,7 @@ Der implementierte "fill8"-Algorithmus entspricht dem Floodfill-Algorithmus mit 
 \end{figure}
 
 	\subsection {Houghtransformation}
+\cite{ThomasBraeunl1995}
 Die Houghtransformation baut auf der Kantendetektion auf: Sie sucht Formen, die von Kantenpunkten gebildet werden.
 Die Houghtransformation ist sehr allgemein verwendbar; Formen können im einfachsten Fall Geraden oder Kreise sein, es können aber auch Ellipsen und andere geometrische Figuren detektiert werden, es handelt sich bei der Houghtransformation also um eine \textbf{modellbasiertes} Verfahren.
 Mit der verallgemeinerten Houghtransformation können sogar beliebige Formen gefunden werden.
