@@ -37,7 +37,7 @@ Nach ausreichend vielen Iterationen wird das beste Modell benutzt um alle Punkte
 Der Algorithmus eignet sich sehr gut um in großen Datenmengen schnell Instanzen von Modellen zu finden. Für den diskutierten Anwendungsfall ist er leider vergleichsweise langsam. Der Grund dafür ist, dass die zu suchenden Objekte schon durch einen Dichte-Threshhold sehr gut vor-isoliert werden können. Man kann sich deshalb direkt darauf konzentrieren einzelne Punktmengen auf bestimmte Eigenschaften hin zu untersuchen. Der große Vorteil von RANSAC schnell mögliche Kandidaten zu entdecken wird deshalb negiert.
 
 \subsection{Alternativer Algorithmus zur Erkennung von Lötkugeln und Bonddrähten}
-Der wohl am naheliegenste Ansatz Objekte in einem Datensatz zu finden, ist den Datensatz in einem hinreichend kleinen Raster abzusuchen und an jedem Punkt das damit verbundene Objekt auf die Ähnlichkeit mit den gesuchten Objekten zu betrachten.
+Der wohl am naheliegenste Ansatz Objekte in einem Datensatz zu finden, ist den Datensatz in einem hinreichend kleinen Raster abzusuchen und an jedem Punkt das damit verbundene Objekt auf die Ähnlichkeit mit den gesuchten Objekten hin zu untersuchen.
 Ein solcher Ansatz ist insbesonere bei den großen und einigermaßen wohlgeformten Lötkugeln sehr intuitiv, wie in der folgenden Abbildung zu sehen ist.
 
 
@@ -82,7 +82,7 @@ Hierbei sei als einfache Approximation nachfolgender Check gegeben (ggf. sollten
 \State $xy = 0.65 < |min[0]-max[0]|/|min[1]-max[1]| < 1.35$
 \State $xz = 0.65 < |min[0]-max[0]|/|min[2]-max[2]| < 1.35$
 \State $zy = 0.65 < |min[2]-max[2]|/|min[1]-max[1]| < 1.35$
-\State \bf{return} $xy \land xz \land zy$ \Comment \textnormal{Näherungsweise von "minimalem" Kubus umschlossen.}
+\State \bf{return} $xy \land xz \land zy$ \Comment \textnormal{"bounding box" \ ist näherungsweise kubisch.}
 \EndProcedure \newline
 \end{algorithmic}
 %\end{Algorithmus}
