@@ -120,6 +120,23 @@ Dabei werden folgende übereinstimmende Merkmalsvektoren gefunden:
   \end{center}
 \end{figure}
 
+Wie deutlich zu sehen ist, werden Borpunkte, die visuell dem Template entsprechen (Bohrpunkt mit äußerer Isolierschicht) fehlerfrei erkannt. Allerdings werden die Bohrpunkte ohne isolierschicht nicht erkannt. Dieser Umstand lässt sich durch eine Modifikation des Suchverfahrens verbessern.
+
+\section{Erweiterung der Merkmalssuche}
+
+Wie im vorigen Abschnitt gezeigt wurde, erkennt das Verfahren des Matchings mit von SIFT-Merkmalen bei einem einzelnen Bild nicht zufriedenstellend, da die Merkmale der Bohrpunkte ohne Isolierschicht nicht eine zu große Distanz zum Merkmalsvektor des Templates im Merkmalsraum haben. \\
+Allerdings zeigt sich, dass in Bilder, die sich im Bilderstack nahe am im vorigen Kapitel untersuchten Bild befinden, diese Bohrpunkte erkannt werden. Daher beschränkt man hier die Merkmalssuche nicht auf ein einzelnes Bild, sondern erweitert die Suche auf eine Teilmenge des Bilderstacks. Dabei werden jeweils die $20$ Bilder des Bilderstacks untersucht, die dem Ausgangsbild am nächsten sind. \\
+Die in diesen 20 Bildern gefundenen Merkmalsvektoren werden anschließend gemerged, d.h. Merkmalsvektoren die mehrfach vorkommen, werden verworfen, so dass von ihnen jeweils nur ein Merkmalsvektor übrig bleibt. Dieses Merging wird wieder mithilfe des euklidischen Abstands im Merkmalsraum vollzogen: Ist der Abstand zweier Merkmalsvektoren im Merkmalsraum geringer als eine bestimmt Schwelle, werden diese als gleich angesehen und ein Merkmalsvektor wird verworfen. Die Orte der verbleibenden Merkmalsvektoren werden wieder im Bild markiert:
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{matches2.pdf}
+    \caption{Suchbild mit eingezeichneten gemergeten Merkmalsvektoren}
+    \label{fig:suchbild_merge_matches}
+  \end{center}
+\end{figure}
+
+Bis auf wenige Fehler in Form von Merkmalsvektoren, die keine Bohpunkte beschreiben, werden auf diese Art und Weise alle Bohrpunkte, egal ob mit oder ohne Isolierschicht, erkannt. \\
+Dieses Verfahren eignet sich somit vor allem dann, wenn mehrere Unterschiedliche Bilder der gleichen Szene existieren (was in dem zu untersuchenden Bilderstack der Fall ist).
  
 
 \section{Template Matching}
