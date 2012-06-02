@@ -4,8 +4,7 @@
 \chapter{2D - Verfahren}
 \label{chap:2d}
 	\section{SIFT}
-\cite{Lowe2004} \\
-		SIFT (Scale-invariant feature transform) ist ein von David Lowe 1999 vorgestelltes Verfahren zur Extraktion von lokalen Merkmalen aus Bildern. Die mit diesem Verfahren gefundene Merkmale haben die Eingeschaft, dass sie robust gegenüber Rotation, Translation und Skalierung sind, und damit zuverlässig in anderen Bilder wiedererkannt werden können. \\
+SIFT (Scale-invariant feature transform \cite{Lowe2004}) ist ein von David Lowe 1999 vorgestelltes Verfahren zur Extraktion von lokalen Merkmalen aus Bildern. Die mit diesem Verfahren gefundene Merkmale haben die Eingeschaft, dass sie robust gegenüber Rotation, Translation und Skalierung sind, und damit zuverlässig in anderen Bilder wiedererkannt werden können. \\
 Um Objekte in Bildern mit SIFT erkennen und lokalisieren zu können, sind also zwei Schritte nötig:
 \begin{enumerate}
 	\item Extraktion und Beschreibung von Merkmalen (Features) des gesuchten Objekts
@@ -15,13 +14,13 @@ Um Objekte in Bildern mit SIFT erkennen und lokalisieren zu können, sind also z
 \subsection{Extraktion und Beschreibung von Merkmalen (Features) des gesuchten Objekts}
 Der Algorithmus zur Extraktion und Beschreibung der Merkmale besteht dabei aus vier Verarbeitungsstufen:
 	\subsubsection{Ermittlung potentieller Merkmale in DoG-Pyramiden}
-		Um Merkmale zu ermitteln, die robust gegenüber Skalierung sind, kommt das Verfahren der DoG (Difference of gaussians) Pyramiden zum Einsatz. Dabei werden aus dem Ausgangsbild zunächst n Gaußpyramiden berechnet. Eine Pyramide besteht dabei aus fortlaufen stärker geglätteten Bildern des Ausgangsbildes $g$. Zur Glättung kommt dabei ein Gaußfilter $G$ zum Einsatz:
+		Um Merkmale zu ermitteln, die robust gegenüber Skalierung sind, kommt das Verfahren der DoG (Difference of Gaussians) Pyramiden zum Einsatz. Dabei werden aus dem Ausgangsbild zunächst n Gaußpyramiden berechnet. Eine Pyramide besteht dabei aus fortlaufend stärker geglätteten Bildern des Ausgangsbildes $g$. Zur Glättung kommt dabei ein Gaußfilter $G$ zum Einsatz:
 \begin{equation*}
  g(x, y) * G_\vartheta (x, y) = g(x, y) * (\frac{1}{\sqrt{2\pi \vartheta ^2}}\cdot e^{-\frac{x^2 + y^2}{2\vartheta ^2}})
 \end{equation*}
-
+\newpage
 Im Anschluss wird das letzte Bild der Pyramide um 50\% verkleinert, und daraus durch erneute fortlaufende Glättung mit dem Gaußfilter eine neue Pyramide erzeugt.
-Je zwei benachbarte Bilder einer Gaußpyramide werden nun voneinander Subtrahiert. Aus den Resultaten entstehen dabei die DoG Pyramiden:
+Je zwei benachbarte Bilder einer Gaußpyramide werden nun voneinander subtrahiert. Aus den Resultaten entstehen dabei die DoG-Pyramiden:
 \begin{figure}
   \begin{center}
     \includegraphics[width=\textwidth]{dog.pdf}
@@ -32,7 +31,7 @@ Je zwei benachbarte Bilder einer Gaußpyramide werden nun voneinander Subtrahier
 
 Die dadurch erzeugten DoG-Pyramiden werden nun auf minimale und maximale Pixelwerte untersucht.
 Ein Maximum ist gefunden, wenn der Grauwert eines Pixels größer als der seiner 26 Nachbarn ist. Nachbarschaft eines Pixels ergibt sich dann aus seinen acht Nachbarn der selben Ebene, sowie aus den jeweils neun Nachbarn der benachbarten Ebenen in der DoG-Pyramide.
-Die Suche nach Minima erfolg auf die selbe Art und Weise. Die Information, auf welcher Skalierung die potentiellen Merkmalspunkte liegen, wird dabei ebenfalls gespeichert.
+Die Suche nach Minima erfolgt auf die selbe Art und Weise. Die Information, auf welcher Skalierung die potentiellen Merkmalspunkte liegen, wird dabei ebenfalls gespeichert.
 \begin{figure}[H]
   \begin{center}
     \includegraphics[width=0.5\textwidth]{scale.pdf}
@@ -43,9 +42,9 @@ Die Suche nach Minima erfolg auf die selbe Art und Weise. Die Information, auf w
 	\subsubsection{Filterung und Lokalisation potentieller Merkmalspunkte}
 		Das oben genannte Verfahren liefert neben den robusten Merkmalspunkten eine große Menge von instabilen, für die weitere Verarbeitung nicht zu gebrauchende Merkmale.
 Daher werden die gefundenen Merkmalspunkte anhand von Stabilitätskriterien gefiltert.
-Im ersten Schritt werden dabei alle Merkmalspunkte entfernt, die einen DoG-Wert von weniger als 0,03, und somit einen relativ niedrigen Kontrast besitzen.
-Merkmalspunkte, die auf Ecken liegen sind “prägnanter” (und somit staibler) als solche, die auf einer Kante liegen, daher werden alle Merkmalspunkte entfernt, die auf einer Kante, aber nicht auf einer Ecke liegen.
-Dies geschieht unter Anwendung der Hesse-Matrix (todo).
+Im ersten Schritt werden dabei alle Merkmalspunkte entfernt, die einen DoG-Wert von weniger als 0.03, und somit einen relativ niedrigen Kontrast besitzen.
+Merkmalspunkte, die auf Ecken liegen sind "`prägnanter"' (und somit staibler) als solche, die auf einer Kante liegen, daher werden alle Merkmalspunkte entfernt, die auf einer Kante, aber nicht auf einer Ecke liegen.
+Dies geschieht unter Anwendung der Hesse-Matrix.
 	\subsubsection{Bestimmung der Hauptorientierungen}
 		Um Invarianz der verbleibenden Merkmalspunkte gegenüber Rotation zu erreichen, wird für jeden Merkmalspunkt dessen Hauptorientierung berechnet.
 Dafür nutzt man das gaußgefilterte Bild, welches der Skalierung des zu untersuchenden Merkmalspunktes am nächsten kommt. In diesem Bild werden nun innerhalb einer festen Region um den Merkmalspunkt herum die Gradientenlängen $m(x, y)$ und die Gradientenorientierungen $\theta (x, y)$ bezüglich eines Punktes $g(x, y)$ berechnet, wobei
@@ -64,25 +63,25 @@ Danach werden die Gradientenorientierungen zusätzlich anhand ihrer Entfernung z
 
 Aus den gewichteten Gradientenorientierungen wird nun ein Orientierungshistogramm erstellt. Dieses Histogramm ist in 36 Winkelbereiche eingeteilt und hat somit eine Klassenbreite von $10\,^{\circ}$.
 Jede Gradientenorientierung wird dabei anhand ihrer Gewichtung an der passenden Stelle im Histogramm aufaddiert. \\
-Nach der Erstellung des Histogramms kann aus diesem die Gradientenlänge $m_{max}$ abgelesen werden (Winkelbereich mit der größten Summe). Die Hauptorientierung des Merkmalspunktes  setzt sich dabei aus $m_{max}$, sowie der zugehörigen Gradientenorientierung $\theta_{max}$ maxzusammen.
+Nach der Erstellung des Histogramms kann aus diesem die Gradientenlänge $m_{max}$ abgelesen werden (Winkelbereich mit der größten Summe). Die Hauptorientierung des Merkmalspunktes  setzt sich dabei aus $m_{max}$, sowie der zugehörigen Gradientenorientierung $\theta_{max}$ zusammen.
 Für den Fall, dass eine weitere Orientierung mit der Gradientenlänge $m_i > 0,8 m_{max}$
-existiert; wie es bei Eckpunkten häufig der Fall ist; wird an der Stelle $(x, y)$ ein weiterer Merkmalspunkt mit der Hauptorientierung $(m_i, \theta_i)$ erstellt.
+existiert, wie es bei Eckpunkten häufig der Fall ist, wird an der Stelle $(x, y)$ ein weiterer Merkmalspunkt mit der Hauptorientierung $(m_i, \theta_i)$ erstellt.
 \subsection{Lokalisation der Merkmale im Suchbild}
 Wurden nun im ersten Schritt die robusten Merkmale des gesuchten Objekts extrahiert, können diese im Suchbild wiedererkannt werden.
 Dies geschieht, in dem man die extrahierten Merkmale des Objekts mit denen im Suchbild auf Übereinstimmung hin untersucht. \\
-Der dafür am häufigsten verwendete Ansatz ist der vergleich anhand des euklidischen Abstands der Merkmalsvektoren.
+Der dafür am häufigsten verwendete Ansatz ist der Vergleich anhand des euklidischen Abstands der Merkmalsvektoren.
 \begin{equation*}
 e = \sqrt{\sum_{i = 1}^{n}(V_{1i} - V_{2i})}
 \end{equation*}
 
 \section{Einsatz von SURF zur Erkennung von Bohrpunkten}
 Um in den Beispieldatensätzen Bohrpunkte auf möglichst effiziente Art und Weise erkennen zu können, wird hier SURF ($Speeded Up Robust Features$), eine leicht veränderte Variante des SIFT-Verfahrens, verwendet. \\
-Der Unterschied zum hier vorgestellen SUFT Verfahrens besteht darin, dass statt der Gaußfilter Mittelwertfilter zum Einsatz kommen. Dadurch wird das Verfahren signifikant beschleunigt, ohne die Erkennungsrate nennenswert zu beeinflussen. \cite{Bay2005} \\
+Der Unterschied zum hier vorgestellen SIFT Verfahrens besteht darin, dass statt der Gaußfilter Mittelwertfilter zum Einsatz kommen. Dadurch wird das Verfahren signifikant beschleunigt, ohne die Erkennungsrate nennenswert zu beeinflussen. \cite{Bay2005} \\
 
 Um Bohrpunkte mithilfe des SURF Verfahrens zu detektieren, wird zunächst ein Modell des Bohrpunktes auf dessen Merkmale hin untersucht. Dazu wird ein Template eines Bohrpunktes aus einem Bild im Bilderstack ausgeschnitten.
 \begin{figure}[H]
   \begin{center}
-    \includegraphics[width=0.4\textwidth]{sift_template.pdf}
+    \includegraphics[width=0.3\textwidth]{sift_template.pdf}
     \caption{Modell eines Bohrpunktes (Vergrößert)}
     \label{fig:sift_template}
   \end{center}
@@ -93,7 +92,7 @@ Auf dieses Template wird nun der besprochene SURF Algorithmus angewandt, um die 
 Das Template wurde dabei bewusst so klein gewählt, dass das Verfahren genau einen Merkmalsvektor liefert, welcher den Bohrpunkt repräsentiert:
 \begin{figure}[H]
   \begin{center}
-    \includegraphics[width=0.4\textwidth]{template_merkmal.pdf}
+    \includegraphics[width=0.3\textwidth]{template_merkmal.pdf}
     \caption{Bohrpunkt mit eingezeichnetem Merkmalsvektor (Vergrößert)}
     \label{fig:template_merkmal}
   \end{center}
@@ -119,7 +118,7 @@ Dabei werden folgende übereinstimmende Merkmalsvektoren gefunden:
   \end{center}
 \end{figure}
 
-Wie deutlich zu sehen ist, werden Borpunkte, die visuell dem Template entsprechen (Bohrpunkt mit äußerer Isolierschicht) fehlerfrei erkannt. Allerdings werden die Bohrpunkte ohne isolierschicht nicht erkannt. Dieser Umstand lässt sich durch eine Modifikation des Suchverfahrens verbessern.
+Wie deutlich zu sehen ist, werden Bohrpunkte, die visuell dem Template entsprechen (Bohrpunkt mit äußerer Isolierschicht) fehlerfrei erkannt. Allerdings werden die Bohrpunkte ohne Isolierschicht nicht erkannt. Dieser Umstand lässt sich durch eine Modifikation des Suchverfahrens verbessern.
 
 \section{Erweiterung der Merkmalssuche}
 
@@ -135,7 +134,7 @@ Die in diesen 20 Bildern gefundenen Merkmalsvektoren werden anschließend gemerg
 \end{figure}
 
 Bis auf wenige Fehler in Form von Merkmalsvektoren, die keine Bohpunkte beschreiben, werden auf diese Art und Weise alle Bohrpunkte, egal ob mit oder ohne Isolierschicht, erkannt. \\
-Dieses Verfahren eignet sich somit vor allem dann, wenn mehrere Unterschiedliche Bilder der gleichen Szene existieren (was in dem zu untersuchenden Bilderstack der Fall ist).
+Dieses Verfahren eignet sich somit vor allem dann, wenn mehrere unterschiedliche Bilder der gleichen Szene existieren (was in dem zu untersuchenden Bilderstack der Fall ist).
  
 
 \section{Template Matching}
@@ -148,7 +147,7 @@ Dieses Verfahren eignet sich somit vor allem dann, wenn mehrere Unterschiedliche
   \end{center}
 \end{figure}
 Dabei wird in jedem Punkt $(x, y)$ ein Änhlichkeitsmaß des Templates gegenüber dem Bild berechnet.
-Ein häufig verwendetes Änglichkeitsmaß ist dabei \textbf{Mean absolute difference (MAD)}.
+Ein häufig verwendetes Änglichkeitsmaß ist dabei \textbf{Mean Absolute Difference (MAD)}.
 Dieses Änhlichkeitsmaß bezeichnet die mittlere Differenz der Grauwerte des Bildes $g$ und des Templates $T$:
 \begin{equation*}
 MAD(x, y) = \frac{1}{M \cdot N} \sum_{ij}^{{}} \left | g(x +i, y + j) - T(i, j) \right |
@@ -163,7 +162,7 @@ Befindet sich bei der Suche das Template genau über der gesuchten Struktur, ist
 \end{figure}
 
 Um die genaue Position der Bohrpunkte zu ermitteln, müssen diese Minima detektiert werden.\\
-Der einfachste Ansatz dafür, ist ein Schwellwert zu benutzen, sodass nach der Schwellwertbildung lediglich die lokalen Minima übrig bleiben.
+Der einfachste Ansatz dafür ist ein Schwellwert zu benutzen, so dass nach der Schwellwertbildung lediglich die lokalen Minima übrig bleiben.
 \begin{figure}[H]
   \begin{center}
     \includegraphics[width=0.9\textwidth]{template_matches.pdf}
@@ -172,7 +171,7 @@ Der einfachste Ansatz dafür, ist ein Schwellwert zu benutzen, sodass nach der S
   \end{center}
 \end{figure}
 
-Ein Problem bei diesem Verfahren ist, den richtigen Schwellwert zu treffen. Ein zu niedriger Schwellwert lässt die lokalen Minima verschwinden. Ein zu hoher Schwellwert führt zu einem "auslaufen" der lokalen Minima in die angrenzenden Regionen.
+Ein Problem bei diesem Verfahren ist den richtigen Schwellwert zu treffen. Ein zu niedriger Schwellwert lässt die lokalen Minima verschwinden. Ein zu hoher Schwellwert führt zu einem "`auslaufen"' der lokalen Minima in die angrenzenden Regionen.
 \begin{figure}[H]
   \begin{center}
     \includegraphics[width=0.5\textwidth]{template_threshold.pdf}
@@ -205,7 +204,7 @@ Da die Radien jedoch leicht schwanken, was insbesondere durch die geringe Auflö
   \end{center}
 \end{figure}
 
-In diesem Raum müssen nun die lokalen Maxima gefunden werden. Dies ist keine triviale Aufgabe, da ein lokales Maxima in einem anderen Bildbereich eher zum oberen Durchschnitt gehört. Es bietet sich hier der Einfachheit halber dennoch an, alle Pixel oberhalb eines Schwellwertes (z.B $0.6 \cdot globMax$) zu Clustern zusammenfassen und aus diesen jeweils den Mittelpunkt als Bohrung zu speichern. 
+In diesem Raum müssen nun die lokalen Maxima gefunden werden. Dies ist keine triviale Aufgabe, da ein lokales Maxima in einem anderen Bildbereich eher zum oberen Durchschnitt gehört. Es bietet sich hier der Einfachheit halber dennoch an alle Pixel oberhalb eines Schwellwertes (z.B $0.6 \cdot globMax$) zu Clustern zusammenfassen und aus diesen jeweils den Mittelpunkt als Bohrung zu speichern. 
 
 \begin{figure}[H]
   \begin{center}
@@ -215,9 +214,9 @@ In diesem Raum müssen nun die lokalen Maxima gefunden werden. Dies ist keine tr
   \end{center}
 \end{figure}
 
-Wendet man ein solches Schwellwertverfahren an, so müsste der Schwellwert heuristisch optimiert werden, um möglichst viele Punkte zu “erwischen”, da Bohrungen ohne umliegende Kanten (bspw. Isoliermaterial) generell schächer in den Akkumulatorraum abgebildet werden. \newline
-Um dieses Bild zu verbessern, hat man natürlich die Möglichkeit den Akkumulatorraum mit verschiedenen Filtern zu falten, um damit bspw. alle kreisförmigen Maxima zu verstärken. \newline
-Ansonsten könnte man beispielsweise verschiedene “Hill-Climbing”-Algorithmen einsetzen, wobei hier zu beachten ist, dass ein lokales Maximum nur dann als Hinweis für eine Bohrung interpretiert werden darf, wenn die Menge zusammenhängender, umgebender Pixel mit ähnlich hohem Wert lokal relativ beschränkt ist. Dadurch werden nur “punktförmige” Maxima gefunden.
+Wendet man ein solches Schwellwertverfahren an, so müsste der Schwellwert heuristisch optimiert werden, um möglichst viele Punkte zu "`erwischen"', da Bohrungen ohne umliegende Kanten (bspw. Isoliermaterial) generell schwächer in den Akkumulatorraum abgebildet werden. \newline
+Um dieses Bild zu verbessern, hat man natürlich die Möglichkeit den Akkumulatorraum mit verschiedenen Filtern zu falten, um damit zum Beispiel alle kreisförmigen Maxima zu verstärken. \newline
+Ansonsten könnte man beispielsweise verschiedene  "`Hill-Climbing"'-Algorithmen einsetzen, wobei hier zu beachten ist, dass ein lokales Maximum nur dann als Hinweis für eine Bohrung interpretiert werden darf, wenn die Menge zusammenhängender, umgebender Pixel mit ähnlich hohem Wert lokal relativ beschränkt ist. Dadurch werden nur "`punktförmige"' Maxima gefunden.
 
 \section{Alternativer Algorithmus zur Erkennung von Bohrpunkten auf Grundlage einer Färbung}
 Die Houghtransformation für Kreise ist relativ rechenintensiv und schließlich muss der Akkumulatorraum noch ausgewertet werden. Auch das Templatematching arbeitet mit Filterkernen, die so groß sind wie die gesuchten Kreise. Dies motivierte dazu einen schnelleren Algorithmus zu entwickeln, zur Not auch auf Kosten der Universalität.
@@ -227,7 +226,7 @@ Eine sehr einfache und effiziente Möglichkeit Kreise in einem Canny-Edge Bild z
 %\caption{Algorithmus in Pseudocode}
 %\label{alg:sample}
 \begin{algorithmic}
-\Procedure{FindHoles}{Bild $img$, Radius $r$, Toleranz $t$}
+\Procedure{FindCircles}{Bild $img$, Radius $r$, Toleranz $t$}
 \ForAll{Pixel $p \in img$}
   \If{$p$ ist weiß}
     \State Folge der zugehörigen weißen Linie $l$ ungefähr $n$ Schritte lang
@@ -260,9 +259,9 @@ Der Algorithmus ist extrem schnell und erkannte in sämtlichen Testbildern ohne 
 Problematisch könnte selbstverständlich die Verallgemeinerung auf die gleichzeitige Suche von Kreisen beliebiger Radien werden. Diesbezüglich wurden noch keine Anstrengungen unternommen, da hierfür noch keine Notwendigkeit bestand.
 
 \section{Einsatz der Houghtransformation zur Erkennung von Leiterbahnen}
-Die Houghtransformation ist nicht direkt geeignet für das Erkennen von Leiterbahnen, da ausschließlich Geradenstücke erkannt werden. Aus Diesen lässt sich jedoch nicht schließen, ob es sich um eine Leiterbahn handelt oder nicht (es könnte z.B. auch Teil von Isoliermaterial sein). \newline
-Die Kurven der Bahnen werden nicht erkannt, somit müsste man die Geradenstücke manuell verlinken und anschließend noch jeweils 2 Kanten (Bahnränder) zu einer Leiterbahn zusammenfassen. Zudem müssten andere, im Bild vorkommende Geraden ausgeschlossen werden. \newline
-Dieses Anpassungsverfahren scheint also um relativ kompliziert zu sein, da es einfachere Wege gibt die Bahnen zu finden.  
+Die Houghtransformation ist nicht direkt geeignet für das Erkennen von Leiterbahnen, da ausschließlich Geradenstücke erkannt werden. Aus diesen lässt sich jedoch nicht schließen, ob es sich um eine Leiterbahn handelt oder nicht (es könnte z.B. auch Teil vom Isoliermaterial sein). \newline
+Die Kurven der Bahnen werden nicht erkannt, somit müsste man die Geradenstücke manuell verlinken und anschließend noch jeweils 2 Kanten (Bahnränder) zu einer Leiterbahn zusammenfassen. Zudem müssten andere, im Bild vorkommenden Geraden ausgeschlossen werden. \newline
+Dieses Anpassungsverfahren scheint also relativ kompliziert zu sein, da es einfachere Wege gibt die Bahnen zu finden.  
 
 \section{Alternativer Algorithmus zu Erkennung von Leiterbahnen auf Grundlage einer Färbung}
 Bohrungen sind relativ einfach zu finden, weil es sich um einigermaßen simple geometrische Objekte handelt. Da alle Leiterbahnen schließlich in einer Bohrung enden, motiviert die Idee einen Algorithmus zu schreiben, der bei bereits erkannten Bohrungen prüft, ob eine Leiterbahn in sie mündet.\newline
@@ -270,7 +269,7 @@ Ein Beispiel für einen solchen Algorithmus wäre folgendes Verfahren: \newline
 \begin{enumerate}
 \item Man zeichne einen Kreis $k1$, dessen Radius etwas größer ist als der Abstand vom Mittelpunkt der Bohrung bis zum äußeren Ende der umgebenden Isolierschicht. \newline
 Da die gefundenen Bohrpunkte nicht immer perfekt in der Mitte liegen, untersucht man auch die Umgebungen jedes Bohrpunktes.
-\item Falls in diesem Kreis ausgenommen von “weiß” und “schwarz” nur zwei Farben vorkommen, so weiß man, dass es sich entweder um eine Bohrung mit Leiterbahn handelt, oder aus Versehen eine “fremde” Region geschnitten wurde. 
+\item Falls in diesem Kreis ausgenommen von "`weiß"' und "`schwarz"' nur zwei Farben vorkommen, so weiß man, dass es sich entweder um eine Bohrung mit Leiterbahn handelt, oder aus Versehen eine "`fremde"' Region geschnitten wurde. 
 \item Betrachtet man das Vorkommen der selteneren Farbe in einem Kreis $k2$, dessen Radius etwas kleiner ist, als der Radius von $k1$, so kann man anhand eines einfachen Vergleichs des Mengenverhältnisses in $k1$ und $k2$ schätzen, dass es sich um ein Leiterbahn handeln kann. \newline
 Dies liegt daran, dass die Farbe der Leiterbahn in beiden Kreisen in ungefähr gleich vielen Pixeln auftauchen muss (im inneren Kreis evtl. etwas häufiger).
 \end{enumerate}
@@ -293,7 +292,7 @@ Dies liegt daran, dass die Farbe der Leiterbahn in beiden Kreisen in ungefähr g
 
 \subsection{Bewertung:}
 Der Algorithmus ist relativ schnell, da er nur die bereits gegebenen Bohrungen untersucht und nicht daher nicht das komplette Bild durchforstet. \newline
-Gegenüber Fehlern im “Canny”-Bild ist der Algorihtmus nur insofern robust wie es der verwendete Färbealgorithmus ist. \newline
+Gegenüber Fehlern im "`Canny"'-Bild ist der Algorihtmus nur insofern robust wie es der verwendete Färbealgorithmus ist. \newline
 Problematisch ist natürlich auch hier, dass der Algorithmus speziell auf das Problem zugeschnitten wurde und daher an Universalität einbüßt.
 
 \section{Weiterer alternativer Algorithmus zu Erkennung von Leiterbahnen}
@@ -316,13 +315,13 @@ Da die gefundenen Bohrpunkte nicht immer perfekt in der Mitte liegen, untersucht
   \end{center}
 \end{figure}
 
-Um nun die tatsächliche Leiterbahn zu extrahieren könnte man beispielsweise den Floodfill Algorithmus der braunen Linie im Bild starten und somit alle Pixel der Leiterbahn zu finden. Das würde jedoch dem Vorhaben widersprechen, ohne Färbung und der damit verbunden, bereits angesprochenen Schwäche auszukommen. \newline
-Daher bietet es sich beispielsweise folgendes Verfahren zur Extraktion der Leiterbahnen an (Die Leiterbahnen machen keine scharfen Kurven): \newline
+Um nun die tatsächliche Leiterbahn zu extrahieren könnte man beispielsweise den Floodfill Algorithmus auf der braunen Linie im Bild starten und somit alle Pixel der Leiterbahn finden. Das würde jedoch dem Vorhaben widersprechen, ohne Färbung und der damit verbunden, bereits angesprochenen Schwäche auszukommen. \newline
+Daher bietet es sich beispielsweise folgendes Verfahren zur Extraktion der Leiterbahnen an (Vorraussetzung: Die Leiterbahnen machen keine scharfen Kurven): \newline
 
 \begin{enumerate}
 \item Man schießt einen Strahl, ausgehend vom Bohrpunkt in Richtung Leiterbahn, dh. durch die Mitte der gezeichneten, braunen Linie.
 \item Der Strahl wird am Punkt p gestoppt, und zwar $n$ Pixel vor einer weißen Linie.
-\item Anschließend vergleicht man $n$ mit $n_{links}$ und $n_{rechts}$, welche entstehen, wenn man, anstatt von p geradeaus zu gehen um um $45^\circ$ nach links bzw. nach rechts geht. 
+\item Anschließend vergleicht man $n$ mit $n_{links}$ und $n_{rechts}$, welche entstehen, wenn man, anstatt von p geradeaus zu gehen um $45^\circ$ nach links bzw. nach rechts geht. 
 \item Den längsten der drei Wege wählt man als neuen Startweg, halbiert den Winkel und macht weiter bei Schritt 3. Durch diesen Trick wird bei den Leiterbahnen für jeden aktuellen Punkt p der längste Weg in die richtige Richtung gefunden (siehe nachfolgende Grafik).
 \item Wenn man den längsten Strahl ausgehend vom Punkt p gefunden hat, dann wird p neu gesetzt, indem man mit diesem Strahl wieder bei Schritt 2 weitermacht. Falls kein neuer Strahl gefunden wurde ist man fertig.
 \end{enumerate}

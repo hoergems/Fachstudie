@@ -70,7 +70,7 @@
 %\studiengang{swt} % Default ist \studiengang{inf}, also Informatik.
 \studiengang{swt}
 \art{Fachstudie}
-\nummer{0000}
+\nummer{}
 
 %Hier das Institut angeben.
 %\institut\fmi
@@ -134,7 +134,6 @@
 %Dies wird mit den naechsten zwei Zeilen korrigiert.
 \setcounter{page}{2}
 \cleardoublepage
-
 %Jetzt das Inhaltsverzeichnis
 %Eigener Seitenstil fuer's Inhaltsverzeichnis
 \deftripstyle{preamble}{}{}{}{}{}{\pagemark}
@@ -146,7 +145,7 @@
 %auch im Stil vom Inhaltsverzeichnis
 \ifdeutsch
 \section*{Kurzfassung}
-Für die computergestützte Analyse planarer Hochfrequenzschaltungen wird mit 3D-Modellen gearbeitet anhand derer die elektrischen Eigenschaften simuliert werden können. Diese 3D-Modelle werden auf Basis von Bildern, die mit Computertomographen erstellt wurden, angefertigt. Dieser Prozess wurde bisher meistens mühsam von Hand durchgeführt. Deshalb werden Algorithmen gesucht, die dabei helfen einfache Strukturen wie Leiterbahnen, Bonddrähten, Lötkugeln und Bohrungen automatisch zu erkennen. Im folgenden werden einige potentielle algorithmische Ansätze vorgestellt und bewertet. Zusätzlich präsentieren die Autoren einige selbstentwickelte, auf das Problem zugeschnittene Verfahren.
+Für die computergestützte Analyse planarer Hochfrequenzschaltungen wird mit 3D-Modellen gearbeitet anhand derer die elektrischen Eigenschaften simuliert werden können. Diese 3D-Modelle werden auf Basis von Bildern, die mit Computertomographen erstellt wurden, angefertigt. \newline Dieser Prozess wurde bisher meistens mühsam von Hand durchgeführt. Deshalb werden Algorithmen gesucht, die dabei helfen einfache Strukturen wie Leiterbahnen, Bonddrähte, Lötkugeln und Bohrungen automatisch zu erkennen. Im folgenden werden einige potentielle algorithmische Ansätze vorgestellt und bewertet. Zusätzlich präsentieren die Autoren einige selbstentwickelte, auf das Problem zugeschnittene Verfahren.
 \else
 \section*{Abstract}
 \fi
@@ -204,27 +203,7 @@ Für die computergestützte Analyse planarer Hochfrequenzschaltungen wird mit 3D
   }}
 \makeatother
 \let\cleardoublepage\clearpage
-\listoffigures
 \let\cleardoublepage\relax
-\listoftables
-
-%Wird nur bei Verwendung von der lstlisting-Umgebung mit dem "caption"-Parameter benoetigt
-%\lstlistoflistings 
-%ansonsten:
-\ifdeutsch
-\listof{Listing}{Verzeichnis der Listings}
-\else
-\listof{Listing}{List of Listings}
-\fi
-
-%mittels \newfloat wurde die Algorithmus-Gleitumgebung definiert.
-%Mit folgendem Befehl werden alle floats dieses Typs ausgegeben
-\ifdeutsch
-\listof{Algorithmus}{Verzeichnis der Algorithmen}
-\else
-\listof{Algorithmus}{List of Algorithms}
-\fi
-%\listofalgorithms %Ist nur f�r Algorithmen, die mittels \begin{algorithm} umschlossen werden, n�tig
 
 \endgroup
 
@@ -259,8 +238,6 @@ Für die computergestützte Analyse planarer Hochfrequenzschaltungen wird mit 3D
 %\renewcommand{\appendixtocname}{Anhang}
 %\renewcommand{\appendixname}{Anhang}
 %\renewcommand{\appendixpagename}{Anhang}
-\appendix
-\input{content/anhang}
 %\printindex
 %\bibliographystyle{alphadin}
 \ifdeutsch

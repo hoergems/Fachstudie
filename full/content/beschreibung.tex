@@ -6,7 +6,7 @@ Die Ergebnisse der Messungen werden in zwei verschiedenen Formaten untersucht:
 
 \begin{enumerate}
 \item \textbf{3D-Voxeldaten} \\
-In ihrer ursprünglichen Form liegen die Daten in Form von dreidimensionalen Rastergrafiken, zusammengesetzt aus volumetrischen Pixeln, vor. Diese Pixel werden üblicherweise als Voxel bezeichnet und sind Teil eines Voxelgitters. Jeder Voxel besitzt einen Wert, der seine Opazität wiedergibt. Der Wert dieser Opazität leitet sich direkt aus der beim CT gemessenen Dichte ab.
+In ihrer ursprünglichen Form liegen die Daten in Form von dreidimensionalen Rastergrafiken, zusammengesetzt aus volumetrischen Pixeln, vor. Diese Pixel werden üblicherweise als Voxel bezeichnet und sind Teil eines Voxelgitters. Jeder Voxel besitzt einen Wert, der seine Opazität wiedergibt. Der Wert dieser Opazität leitet sich direkt aus der beim CT gemessenen Reflektanzwert ab.
 
 \begin{figure}[H]
   \begin{center}
@@ -15,7 +15,7 @@ In ihrer ursprünglichen Form liegen die Daten in Form von dreidimensionalen Ras
     \label{fig:3ddata1}
   \end{center}
 \end{figure}
-
+\newpage
 \item \textbf{2D-Slices} \\
 Die zweidimensionalen Slices werden auf Basis der 3D-Voxeldaten berechnet. Dabei wird eine Schicht des Voxelgitters extrahiert und auf Basis der Opazitätswerte eine Rastergrafik erstellt, wobei jeder Pixel eindeutig einem Voxel zugeordnet werden kann. Durch diese Umformung können bei der Objekterkennung auch 2D-Verfahren genutzt werden.
 
@@ -26,5 +26,4 @@ Die zweidimensionalen Slices werden auf Basis der 3D-Voxeldaten berechnet. Dabei
     \label{fig:2ddata1}
   \end{center}
 \end{figure}
-
 \end{enumerate}

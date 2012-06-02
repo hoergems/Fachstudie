@@ -5,14 +5,14 @@
 \label{chap:k3}
 Die Allgemeinen Verfahren sind unterstützende Algorithmen mit denen die zu analysierenden Daten für komplexere Erkennungsverfahren vorverarbeitet werden. Meistens filtern sie unnötige oder störende Informationen heraus oder modifizieren die Daten so, dass sich die zu erkennenden Objekte besser von den unbrauchbaren Daten abheben.
 	\subsection {Canny-Edge-Detektor}
-\cite{Canny1986}
-		Der Canny-Edge Operator is ein von John Canny 1986 entwickelter Algorithmus zur Kantendetektion. Er liefert für ein Grauwertbild idealerweise alle zusammenhängenden Kanten. Der Algorithmus gliedert sich dabei im Wesentlichen in zwei Schritte:
+
+		Der Canny-Edge Operator \cite{Canny1986} is ein von John Canny 1986 entwickelter Algorithmus zur Kantendetektion. Er liefert für ein Grauwertbild idealerweise alle zusammenhängenden Kanten. Der Algorithmus gliedert sich dabei im Wesentlichen in zwei Schritte:
 \begin{enumerate}
 	\item Kantenhervorhebung
-	\item Erzeugung von Katenzügen
+	\item Erzeugung von Kantenzügen
 \end{enumerate}
 
-Zunächst wird das Bild mit einem zweidimensionalen Gaußkern $G$ gefaltet:
+Zunächst wird das Bild mit einem zweidimensionalen Gaußkern gefaltet:
 {\[\large \begin{bmatrix}
 1 & 2 & 1\\ 
 2 & 4 & 2 \\ 
@@ -40,7 +40,7 @@ S(x) = \begin{bmatrix}
 1 & 0 & -1\\ 
 2 & 0 & -2\\ 
 1 & 0 & -1
-\end{bmatrix},
+\end{bmatrix},\,
 S(y) = \begin{bmatrix}
 1 & 2 & 1\\ 
 0 & 0 & 0\\ 
@@ -60,7 +60,7 @@ G(x, y) = \sqrt{G_x(x, y)^2 + G_y(x, y)^2}
 \end{equation*}
 Im nächsten Schritt wird eine Technik names “Non-maximum suppression” angewandt, um sicherzustellen, dass Kanten nicht breiter als ein Pixel sind. Dabei wird für jedes Pixel dessen 8-Nachbarschaft untersucht. Befindet sich in der Nachbarschaft des zu untersuchenden Pixels ein Pixel, dass einen höheren Grauwert aufweist, so wird der Grauwert des zu untersuchenden Pixels auf 0 gesetzt, es sei denn, das Pixel mit dem größeren Grauwert befindet sich entlang der Gradientenrichtung. \\ \\
 Im letzten Schritt des Verfahrens werden die Pixel zu Kantenzügen zusammengefasst.
-Dabei verwendet man zwei Schwellwerte $L_1 < L_2$. Zunächst wird nach einem Pixel gesucht, dessen Grauwert größer als $L_2$ ist. Dieses Pixel wird zum Startpixel des Kantenzugs erklärt. Nun wird die Kante in beiden Richtungen nach Pixel mit einem Grauwert größer $L_1$ abgesucht, welche dem Kantenzug hinzugefügt werden. Werden keine Pixel gefunden, die diese Bedingung erfüllen, bricht die Suche ab, und des wird ein neues Startpixel gesucht.Das Verfahren endet, sobald kein unmarkiertes Pixel mit einem Grauwert größer $L_2$ gefunden wird. \\ \\
+Dabei verwendet man zwei Schwellwerte $L_1 < L_2$. Zunächst wird nach einem Pixel gesucht, dessen Grauwert größer als $L_2$ ist. Dieses Pixel wird zum Startpixel des Kantenzugs erklärt. Nun wird die Kante in beiden Richtungen nach Pixel mit einem Grauwert größer $L_1$ abgesucht, welche dem Kantenzug hinzugefügt werden. Werden keine Pixel gefunden, die diese Bedingung erfüllen, bricht die Suche ab, und des wird ein neues Startpixel gesucht. Das Verfahren endet, sobald kein unmarkiertes Pixel mit einem Grauwert größer $L_2$ gefunden wird. \\ \\
 Als Resultat des Verfahrens entsteht ein Bild, das eine Menge von Pixeln enthält, die idealerweise genau die Kantenpixel des Ausgangsbilds enthält.
 \begin{figure}[H]
   \begin{center}
@@ -84,12 +84,12 @@ Durch die Eigenschaften der Slices bietet sich die Posterisation als Verfahren f
 Das große Problem der Posterisation sind die nicht perfekten CT-Scans. Die Platinen liegen meistens nicht perfekt ausgerichtet in der Aufnahme und somit kommt es vor allem im idealerweise gleichmäßigen Hintergrund zu leichten Artefakten wie z.B. Farbverläufen, die die Posterisation so stark stören, dass das Ergebnis häufig nicht sinnvoll weiterverwerdent werden kann. \\
 Es gibt mehrere Möglichkeiten ein Bild zu posterisieren, eine davon ist die sogenannte Farbreduktion. Dafür werden Algorithmen benutzt, die die \textit{n} besten Farben für das zu posterisierende Bild ermitteln. Das gebräuchlichste Vorgehen betrachtet die Farbreduktion als ein Cluster-Problem im dreidimensionalen Raum, wobei die Achsen die drei Farbkanäle rot, grün und blau repräsentieren.
 \subsubsection {Median-Schnitt-Algorithmus}
-Der Median-Schnitt ist ein Sortierverfahren für n-demensionale Daten und der meistbenutzte Farbreduktions-Algorithmus. Er unterteilt die Farbwerte anhand des Medians iterativ in Gruppen ähnlicher Werte. Nach der Lokalisation dre Gruppen werden deren Farbwerte typischerweise gemittelt um den repräsentierenden Farbwert zu erhalten. Bei der Farbreduktion wird dies so oft wiederholt bis die Anzahl der Gruppen der Anzahl der gewünschten Farben entspricht. Der Median  wird mit Hilfe der euklidischen Distanz berechnet:
+Der Median-Schnitt ist ein Sortierverfahren für n-dimensionale Daten und der meistbenutzte Farbreduktions-Algorithmus. Er unterteilt die Farbwerte anhand des Medians iterativ in Gruppen ähnlicher Werte. Nach der Lokalisation der Gruppen werden deren Farbwerte typischerweise gemittelt um den repräsentierenden Farbwert zu erhalten. Bei der Farbreduktion wird dies so oft wiederholt bis die Anzahl der Gruppen der Anzahl der gewünschten Farben entspricht. Der Median  wird mit Hilfe der euklidischen Distanz berechnet:
 \begin{equation*}
 d(a,b)=\sqrt{(a_R-b_R)^2 + (a_G-b_G)^2 + (a_B-b_B)^2}
 \end{equation*}
 	\subsection {Floodfill-Algorithmus}
-Floodfill ist ein Algorithmus, der in multi-dimensionalen Arrays zusammenhängende Felder erkennen und färben kann. Ob Felder zusammenhängen ist abhängig davon ob sie identische Eigenschaften aufweisen. Bei zweidimensionalen Bilddaten wird dafür die Farbe der Pixel verwendet. Ausgehend von einem Startpunkt durchsucht der Algorithmus “flutartig” das Array und ändert die Suchrichtung, sobald eine Eigenschaft nicht mehr erfüllt ist. \\
+Floodfill ist ein Algorithmus, der in multi-dimensionalen Arrays zusammenhängende Felder erkennen und färben kann. Ob Felder zusammenhängen ist abhängig davon, ob sie identische Eigenschaften aufweisen. Bei den hier verwendeten Bilddaten wird dafür die Farbe der Pixel/Voxel verwendet. Ausgehend von einem Startpunkt durchsucht der Algorithmus “flutartig” das Array und ändert die Suchrichtung, sobald eine Eigenschaft nicht mehr erfüllt ist. \\
 Der Algorithmus betrachtet ausgehend von einem Startpunkt rekursiv alle benachbarten Felder und färbt diese gegebenenfalls. Ausgehend davon wie viele der Nachbarfelder betrachtet werden spricht man z.B. im zweidimensionalen von “fill4” (oben, unten, links, rechts) oder “fill8” (alle Nachbarn). \\ \\
 Alle eingesetzten Verfahren arbeiten auf dem Resultat eines Canny-Edge-Detektors. Zusätzlich wurde bei den Verfahren, die auf einem gefärbten Bild arbeiten, eine Färbung zusammenhängender schwarzer Flächen nach folgendem Prinzip durchgeführt: \\
 
@@ -99,7 +99,7 @@ for x in xrange(0, width, 3):   # stepsize ist 3
 		fill8(img, x, y, (0,0,0), randomColor, resimg)
 \end{lstlisting}
 
-Der implementierte "fill8"-Algorithmus entspricht dem Floodfill-Algorithmus mit einer 8-Pixel Nachbarschaft, welcher im vorigen Abschnitt beschrieben wurde. Dabei wurde der Algorithmus derart modifiziert, dass zuerst in der 8er-Umgebung geprüft wurde ob ein weißer Pixel an den zu untersuchenden Pixel angrenzt und anschließend die 4er-Umgebung auf den Stack gelegt wurde, falls die Prüfung negativ ausgefallen ist. Durch diesen Trick wird verhindert, dass der Algorithmus durch kleinere Lücken (bis 2 Pixel) des Canny-Bildes, welche aufgrund von von fehlerhafter Erkennung entstehen, nicht hindurch läuft.
+Der implementierte "fill8"\,-Algorithmus entspricht dem Floodfill-Algorithmus mit einer 8-Pixel Nachbarschaft, welcher im vorigen Abschnitt beschrieben wurde. Dabei wurde der Algorithmus derart modifiziert, dass zuerst in der 8er-Umgebung geprüft wurde ob ein weißer Pixel an den zu untersuchenden Pixel angrenzt und anschließend die 4er-Umgebung auf den Stack gelegt wurde, falls die Prüfung negativ ausgefallen ist. Durch diesen Trick wird verhindert, dass der Algorithmus durch kleinere Lücken (bis 2 Pixel) des Canny-Bildes, welche aufgrund von von fehlerhafter Erkennung entstehen, hindurch läuft.
 
 \begin{figure}[H]
   \begin{center}
@@ -110,14 +110,13 @@ Der implementierte "fill8"-Algorithmus entspricht dem Floodfill-Algorithmus mit 
 \end{figure}
 
 	\subsection {Houghtransformation}
-\cite{ThomasBraeunl1995}
-Die Houghtransformation baut auf der Kantendetektion auf: Sie sucht Formen, die von Kantenpunkten gebildet werden.
-Die Houghtransformation ist sehr allgemein verwendbar; Formen können im einfachsten Fall Geraden oder Kreise sein, es können aber auch Ellipsen und andere geometrische Figuren detektiert werden, es handelt sich bei der Houghtransformation also um eine \textbf{modellbasiertes} Verfahren.
+Die Houghtransformation \cite{ThomasBraeunl1995}  baut auf der Kantendetektion auf: Sie sucht Formen, die von Kantenpunkten gebildet werden.
+Die Houghtransformation ist sehr allgemein verwendbar; Formen können im einfachsten Fall Geraden oder Kreise sein, es können aber auch Ellipsen und andere geometrische Figuren detektiert werden, es handelt sich bei der Houghtransformation also um eine \textbf{modellbasiertes} Verfahren. \\
 Mit der verallgemeinerten Houghtransformation können sogar beliebige Formen gefunden werden.
-Die Houghtransformation benutzt ein einfaches Grundprinzip: Man untersucht alle Kantenpunkte auf Hinweise auf eine gegebene Form, die man detektieren möchte. Diese Hinweise werden in einem Akkumulatorraum (Parameterraum) gespeichert. Nachdem alle Kantenpunkte untersucht wurden, wertet man die gesammelten Hinweise im Akkumulatorraum aus.
+Die Houghtransformation benutzt ein einfaches Grundprinzip: Man untersucht alle Kantenpunkte auf Hinweise auf eine gegebene Form, die man detektieren möchte. Diese Hinweise werden in einem Akkumulatorraum (Parameterraum) gespeichert. Nachdem alle Kantenpunkte untersucht wurden, wertet man die gesammelten Hinweise im Akkumulatorraum aus. \\
 Die Untersuchung der Kantenpunkte und die Dimension des Akkumulatorraums hängen dabei von der Form ab, die man detektieren will.
 		\subsubsection{Houghtransformation zur Erkennung von Geraden}
-			Wendet man auf ein Bild die üblichen Kantenfilter an (Sobel-Operator, Canny-Edge-Detektor) zeigt sich, dass diese Verfahren zwar eine Menge von Punkten liefern, die auf Kanten, bzw. Geraden liegen, die Zusammenfassung dieser Punkte zu echten Kanten allerdings fehlt. Hier setzt die Houghtransformation an, indem es ein zusammenhängendes Geradenstück auf einen Punkt im Akkumulatorraum abbildet. \\
+			Wendet man auf ein Bild die üblichen Kantenfilter an (Sobel-Operator, Canny-Edge-Detektor) zeigt sich, dass diese Verfahren zwar eine Menge von Punkten liefern, die auf Kanten, bzw. Geraden liegen, die Gruppierung dieser Punkte zu echten Kanten allerdings fehlt. Hier setzt die Houghtransformation an, indem es ein zusammenhängendes Geradenstück auf einen Punkt im Akkumulatorraum abbildet. \\
 Eine Gerade, beschrieben durch die Gleichung $y = mx + b$ würde also auf einen Punkt im zweidimensionalen Akkumulatorraum, der durch $m$ und $b$ aufgespannt wird, abgebildet werden. Dadurch können allerdings senkrechte Geraden, die keine Steigung besitzen, nicht mehr korrekt in den Akkumulatorraum abgebildet werden. \\
 Daher verwendet man die Hessesche Normalform zur Darstellung der Geraden:
 \begin{equation*}
@@ -149,7 +148,7 @@ Im nächsten Schritt "votiert" \, jedes Element $(x, y) \in M$ für einen Punkt 
 \end{figure}
 
 Alle Punkte, die auf einer Geraden liegen, votieren somit für den gleichen Punkt in $A$. \\ 
-Allerdings werden Punkte einer Geraden aufgrund von Ungenauigkeiten nicht exakt für den selben Punkt $A(\theta_i, r_i)$ votieren, sondern einen Cluster bilden. Daher genügt es nicht, im Akkumulatorraum nach großen Werten zu suchen, sondern es ist zusätzlich eine Clusteranalyse notwendig, um alle Punkte auf der Geraden zu ''erwischen".
+Allerdings werden Punkte einer Geraden aufgrund von Ungenauigkeiten nicht exakt für den selben Punkt votieren, sondern einen Cluster bilden. Daher genügt es nicht, im Akkumulatorraum nach großen Werten zu suchen, sondern es ist zusätzlich eine Clusteranalyse notwendig, um alle Punkte auf der Geraden zu "`erwischen"'.
 \begin{figure}[H]
   \begin{center}
     \includegraphics[width=\textwidth]{akku_projection.pdf}
@@ -161,7 +160,7 @@ Allerdings werden Punkte einer Geraden aufgrund von Ungenauigkeiten nicht exakt 
 
 			
 		\subsubsection{Houghtransformation Erkennung von Kreisen}
-Die Houghtransformation kann auch zur Erkennung von Kreisen eingesetzt werden. Auch hier werden "Hinweise"\, auf die gesuchte Form im Akkumulatorraum gesammelt. 
+Die Houghtransformation kann auch zur Erkennung von Kreisen eingesetzt werden. Auch hier werden "`Hinweise"', auf die gesuchte Form im Akkumulatorraum gesammelt. 
 Ausgehend von einem Kantenbild wird jeder Pixel einer Kante als von Kreisen mit beliebigem (oder festgelegtem) Radius erzeugt angesehen. Die Transformation in den Akkumulatorraum funktioniert so, dass man dort alle Kreismittelpunkte einträgt, die Kreise erzeugen könnten, auf denen der Pixel liegen würde. Es wird also der entsprechende Punktpixel im Akkumulatorraum um 1 erhöht. \\
 Falls nebenbei zu jedem Kantenpixel die zugehörigen Kantenrichtung bekannt  ist, kann diese Information genutzt werden und es bleiben nur noch zwei möglich Kreise übrig.\\
 Wenn nun die Punkte im Kantenbild einen Kreis repräsentieren, ist an der zum Mittelpunkt gehörenden Stelle im Akkumulatorraum ein besonders hoher Wert eingetragen, da dort sehr viele Kantenpixel des Kreises für den Mittelpunkt abgestimmt haben. Die Maxima im Akkumulatorraum repräsentieren also die Kreismittelpunkte.
@@ -178,10 +177,3 @@ In der Abbildung sieht man einen Kantenpunkt (dargestellt durch ein Kreuz). Die 
 
 Die ersten zwei Dimensionen des Hough-Raums entsprechen hier also denen des Bildraums, da die (x,y)-Koordinaten in die Lage des Kreismittelpunktes beschreiben. Zusätzlich dazu ist laut der Kreisgleichung $x^2 + y^2 = r^2$ der Radius $r$ der dritte Parameter, der beachtet werden sollte, wenn man nach Kreisen mit beliebigen Radius sucht. Falls letzteres nicht der Fall ist, kann der Parameter weggelassen werden, was im zweidimensionalen Fall einen einfach darzustellenden und anschaulichen Hough-Raum liefert. \\
 Anschließend muss natürlich auch hier, wie auch im Fall von Geraden, der Akkumulatorraum auf lokale Maxima untersucht werden.
-
-
-%\vspace{-3cm}
-%\vspace{2cm}
-
-
-
