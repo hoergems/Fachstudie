@@ -117,30 +117,28 @@ Mit der verallgemeinerten Houghtransformation können sogar beliebige Formen gef
 Die Houghtransformation benutzt ein einfaches Grundprinzip: Man untersucht alle Kantenpunkte auf Hinweise auf eine gegebene Form, die man detektieren möchte. Diese Hinweise werden in einem Akkumulatorraum (Parameterraum) gespeichert. Nachdem alle Kantenpunkte untersucht wurden, wertet man die gesammelten Hinweise im Akkumulatorraum aus.
 Die Untersuchung der Kantenpunkte und die Dimension des Akkumulatorraums hängen dabei von der Form ab, die man detektieren will.
 		\subsubsection{Houghtransformation zur Erkennung von Geraden}
-			Wendet man auf ein Bild die üblichen Katenfilter an (Sobel-Operator, Canny-Edge-Detektor) zeigt sich, dass diese Verfahren zwar eine Menge von Punkten liefern, die auf Kanten, bzw. Geraden liegen, die Zusammenfassung dieser Punkte zu echten Kanten allerdings fehlt. Hier setzt die Houghtransformation an, indem es ein zusammenhängendes Geradenstück auf einen Punkt im Akkumulatorraum abbildet. \\
+			Wendet man auf ein Bild die üblichen Kantenfilter an (Sobel-Operator, Canny-Edge-Detektor) zeigt sich, dass diese Verfahren zwar eine Menge von Punkten liefern, die auf Kanten, bzw. Geraden liegen, die Zusammenfassung dieser Punkte zu echten Kanten allerdings fehlt. Hier setzt die Houghtransformation an, indem es ein zusammenhängendes Geradenstück auf einen Punkt im Akkumulatorraum abbildet. \\
 Eine Gerade, beschrieben durch die Gleichung $y = mx + b$ würde also auf einen Punkt im zweidimensionalen Akkumulatorraum, der durch $m$ und $b$ aufgespannt wird, abgebildet werden. Dadurch können allerdings senkrechte Geraden, die keine Steigung besitzen, nicht mehr korrekt in den Akkumulatorraum abgebildet werden. \\
 Daher verwendet man die Hessesche Normalform zur Darstellung der Geraden:
 \begin{equation*}
-r = x \cdot cos (\theta _0) + y \cdot sin (\theta _0) , \theta _0 \in [0, \pi [
+r = x \cdot cos (\theta) + y \cdot sin (\theta) ,\, \theta \in [0,\,2\pi ]
 \end{equation*}
+Die Gerade ist also die Menge aller Punkte $(x,y)$, die diese Gleichung erfüllen. $\theta$ sei der Winkel zwischen der y-Achse und der Geraden, $r \in D$ der Abstand der Geraden zum Ursprung, wobei $D$ die Diagonallänge des Bildes sei. 
 
 Der zugehörige Akkumulatorraum $A$ wird damit von $\theta$ und $r$ aufgespannt.
 
-Zunächst wird das Ausgangsbild mit einem Gradientenoperator gefiltert (z.B. mit dem Sobel-Filter), woraus sich eine Matrix der Gradientenstärke $G(x, y)$ und der Gradientenrichtung $\theta (x, y)$ berechnen lässt (siehe Canny-Edge-Detektor). \\
+Zunächst wird das Ausgangsbild mit einem Gradientenoperator gefiltert (z.B. mit dem Sobel-Filter), woraus sich eine Matrix der Gradientenstärke $G(x, y)$ und der Gradientenrichtung $\phi (x, y)$ berechnen lässt (siehe Canny-Edge-Detektor). \\
 Auf $G(x, y)$ wird nun ein Schwellwert $G^*$ angewandt, um die $N$ Pixel zu erhalten, die nicht durch kleinere Grauwertschwankungen im Ausgangsbild verursacht wurden.  Man erhält die Menge
 \begin{equation*}
-M = \left \{ (x_i, y_i, \theta _i) | G(x_i, y_i) \geq G^*, \theta _i=\theta (x, y), i = 1...N \right \}
+M = \left \{ (x, y) | G(x, y) \geq G^*\right \}, |M|=N.
 \end{equation*}
 
-aus Kantenpunkten und -richtungen. \\
-Im nächsten Schritt "votiert" jedes Element $(x_i, y_i, \theta_i) \in M$ für einen Punkt $(\theta_i, r)$ im Akkumulatorraum, indem der Wert um 1 erhöht wird:
-\begin{itemize}
-\item $\forall (x_i, y_i \theta_i) \in M:$
-	\begin{enumerate}
-		\item $r = x_i \cdot cos(\theta_i) + y \cdot sin(\theta_i)$
-		\item {Erhoehe $(\theta_i, r_i)$ um 1}
-	\end{enumerate}
-\end{itemize}
+Im nächsten Schritt "votiert" \, jedes Element $(x, y) \in M$ für einen Punkt $(\theta, r)$ im Akkumulatorraum, indem der Wert um 1 erhöht wird: \\\\
+ $\forall (x, y) \in M:$
+\begin{enumerate}
+\item Bilde $r = x \cdot cos (\theta) + y \cdot sin (\theta)$ aus $x,y$ und $\phi (x,y)$
+\item Erhöhe $(\theta, r)$ um 1
+\end{enumerate}
 
 \begin{figure}[H]
   \begin{center}
@@ -163,8 +161,24 @@ Allerdings werden Punkte einer Geraden aufgrund von Ungenauigkeiten nicht exakt 
 
 			
 		\subsubsection{Houghtransformation Erkennung von Kreisen}
+Die Houghtransformation kann auch zur Erkennung von Kreisen eingesetzt werden. Auch hier werden "Hinweise"\, auf die gesuchte Form im Akkumulatorraum gesammelt. 
+Ausgehend von einem Kantenbild wird jeder Pixel einer Kante als von Kreisen mit beliebigem (oder festgelegtem) Radius erzeugt angesehen. Die Transformation in den Akkumulatorraum funktioniert so, dass man dort alle Kreismittelpunkte einträgt, die Kreise erzeugen könnten, auf denen der Pixel liegen würde. Es wird also der entsprechende Punktpixel im Akkumulatorraum um 1 erhöht. \\
+Falls nebenbei zu jedem Kantenpixel die zugehörigen Kantenrichtung bekannt  ist, kann diese Information genutzt werden und es bleiben nur noch zwei möglich Kreise übrig.\\
+Wenn nun die Punkte im Kantenbild einen Kreis repräsentieren, ist an der zum Mittelpunkt gehörenden Stelle im Akkumulatorraum ein besonders hoher Wert eingetragen, da dort sehr viele Kantenpixel des Kreises für den Mittelpunkt abgestimmt haben. Die Maxima im Akkumulatorraum repräsentieren also die Kreismittelpunkte.
 
-	
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{hough1.png}
+    \caption{Suche nach Kreise mit bekanntem Radius: \newline
+Ein Kreis mit Radius $r_0$ kann durch seinen Mittelpunkt $(x_0,\,y_0)$ charakterisiert werden.
+In der Abbildung sieht man einen Kantenpunkt (dargestellt durch ein Kreuz). Die Mittelpunkte der Kreise mit Radius $r_0$, zu denen dieser Punkt gehören könnte (zwei davon sind gestrichelt eingezeichnet), liegen auf einem Kreis mit Radius $r_0$ um ihn herum.}
+    \label{fig:akku_projection1}
+  \end{center}
+\end{figure}
+
+Die ersten zwei Dimensionen des Hough-Raums entsprechen hier also denen des Bildraums, da die (x,y)-Koordinaten in die Lage des Kreismittelpunktes beschreiben. Zusätzlich dazu ist laut der Kreisgleichung $x^2 + y^2 = r^2$ der Radius $r$ der dritte Parameter, der beachtet werden sollte, wenn man nach Kreisen mit beliebigen Radius sucht. Falls letzteres nicht der Fall ist, kann der Parameter weggelassen werden, was im zweidimensionalen Fall einen einfach darzustellenden und anschaulichen Hough-Raum liefert. \\
+Anschließend muss natürlich auch hier, wie auch im Fall von Geraden, der Akkumulatorraum auf lokale Maxima untersucht werden.
+
 
 %\vspace{-3cm}
 %\vspace{2cm}
