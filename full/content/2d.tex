@@ -133,8 +133,9 @@ Die in diesen 20 Bildern gefundenen Merkmalsvektoren werden anschließend gemerg
   \end{center}
 \end{figure}
 
-Bis auf wenige Fehler in Form von Merkmalsvektoren, die keine Bohpunkte beschreiben, werden auf diese Art und Weise alle Bohrpunkte, egal ob mit oder ohne Isolierschicht, erkannt. \\
-Dieses Verfahren eignet sich somit vor allem dann, wenn mehrere unterschiedliche Bilder der gleichen Szene existieren (was in dem zu untersuchenden Bilderstack der Fall ist).
+\subsection{Bewertung:}
+Bis auf einiger Fehler in Form von Merkmalsvektoren, die keine Bohrpunkte beschreiben, wurde im getesteten Bild auf diese Art und Weise alle Bohrpunkte, egal ob mit oder ohne Isolierschicht, erkannt. Das Verfahren wurde jedoch nur für das gezeigte Testbild eingehend untersucht, daher können keine Aussagen über die Fehlerhäufigkeit bei Bildern mit einer komplexeren Struktur getroffen werden.\\ 
+Es hat sich gezeigt, dass die Kombination der einzelnen Szenenbilder bemerkenswerte Verbesserungen erbracht hat. Dieses Verfahren eignet sich somit vor allem dann, wenn mehrere unterschiedliche Bilder der gleichen Szene existieren (was in dem zu untersuchenden Bilderstack der Fall ist). 
  
 
 \section{Template Matching}
@@ -180,7 +181,8 @@ Ein Problem bei diesem Verfahren ist den richtigen Schwellwert zu treffen. Ein z
   \end{center}
 \end{figure}
 
-Dieser Umstand macht eine automatisierte Suche nach den lokalen Minima schwierig und für die hier betrachteten Daten ungeeignet.
+\subsection{Bewertung:}
+Die Unterschiede bei den lokalen Minima, welche durch die Wahl des Templates, Helligkeits- und Farbunterschiede im Suchbild oder geringer Formunterschiede der Bohrungen und ihrer Umgebung entstehen, machen eine automatisierte Suche nach den lokalen Minima sehr schwierig. Sowohl das Template als auch der Algorithmus zur Extraktion der lokalen Minima muss heuristisch optimiert werden, um bessere Ergebnisse zu erzielen. Da es im Umfang der Fachstudie nicht gelungen dies effektiv zu atomatisieren, muss der Templatematching-Algorithmus für die hier betrachteten Daten als ungeeignet eingestuft werden.
 
 
 \section{Einsatz der Houghtransformation zur Erkennung von Bohrpunkten}
@@ -216,7 +218,11 @@ In diesem Raum müssen nun die lokalen Maxima gefunden werden. Dies ist keine tr
 
 Wendet man ein solches Schwellwertverfahren an, so müsste der Schwellwert heuristisch optimiert werden, um möglichst viele Punkte zu "`erwischen"', da Bohrungen ohne umliegende Kanten (bspw. Isoliermaterial) generell schwächer in den Akkumulatorraum abgebildet werden. \newline
 Um dieses Bild zu verbessern, hat man natürlich die Möglichkeit den Akkumulatorraum mit verschiedenen Filtern zu falten, um damit zum Beispiel alle kreisförmigen Maxima zu verstärken. \newline
-Ansonsten könnte man beispielsweise verschiedene  "`Hill-Climbing"'-Algorithmen einsetzen, wobei hier zu beachten ist, dass ein lokales Maximum nur dann als Hinweis für eine Bohrung interpretiert werden darf, wenn die Menge zusammenhängender, umgebender Pixel mit ähnlich hohem Wert lokal relativ beschränkt ist. Dadurch werden nur "`punktförmige"' Maxima gefunden.
+Ansonsten könnte man beispielsweise verschiedene  "`Hill-Climbing"'-Algorithmen einsetzen, wobei hier zu beachten ist, dass ein lokales Maximum nur dann als Hinweis für eine Bohrung interpretiert werden darf, wenn die Menge zusammenhängender, umgebender Pixel mit ähnlich hohem Wert lokal relativ beschränkt ist. Dadurch werden nur "`punktförmige"' Maxima gefunden. \\
+Im Anschluss müssen natürlich noch die einzelnen Cluster jeweils zu Bohrpunkten zusammengefasst werden.
+
+\subsection{Bewertung:}
+Die Unterschiede bei den lokalen Minima, welche durch Größen- und Formunterschiede der Bohrungen und ihrer Umgebung entstehen, machen eine automatisierte Suche nach den lokalen Minima sehr schwierig. Da sich die Houghtransformation jedoch nur auf die Resultate des Canny-Edge-Detektores stützt, fallen die Unterschiede der lokalen Minima kleiner aus als beim Template-Matching. Daher ist es auch mit dem einfachen Schwellwert-Verfahren bereits möglich die meisten Bohrungen in der Platine ausfindig zu machen.
 
 \section{Alternativer Algorithmus zur Erkennung von Bohrpunkten auf Grundlage einer Färbung}
 Die Houghtransformation für Kreise ist relativ rechenintensiv und schließlich muss der Akkumulatorraum noch ausgewertet werden. Auch das Templatematching arbeitet mit Filterkernen, die so groß sind wie die gesuchten Kreise. Dies motivierte dazu einen schnelleren Algorithmus zu entwickeln, zur Not auch auf Kosten der Universalität.
