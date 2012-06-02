@@ -16,7 +16,7 @@
                parskip=half,
 %				pointlessnumbers, %f"ur englische Texte, dann auch "packages_and_options" und "fonts" anpassen.
 %               draft    % um zu sehen, wo noch nachgebessert werden muss - wichtig, da Bindungskorrektur mit drin
-               final   % ACHTUNG! - in pagestyle.tex noch Seitenstil anpassen
+               %final   % ACHTUNG! - in pagestyle.tex noch Seitenstil anpassen
                ]{scrbook}
 
 %Englisch:			   
@@ -145,7 +145,10 @@
 %auch im Stil vom Inhaltsverzeichnis
 \ifdeutsch
 \section*{Kurzfassung}
-Für die computergestützte Analyse planarer Hochfrequenzschaltungen wird mit 3D-Modellen gearbeitet anhand derer die elektrischen Eigenschaften simuliert werden können. Diese 3D-Modelle werden auf Basis von Bildern, die mit Computertomographen erstellt wurden, angefertigt. \newline Dieser Prozess wurde bisher meistens mühsam von Hand durchgeführt. Deshalb werden Algorithmen gesucht, die dabei helfen einfache Strukturen wie Leiterbahnen, Bonddrähte, Lötkugeln und Bohrungen automatisch zu erkennen. Im folgenden werden einige potentielle algorithmische Ansätze vorgestellt und bewertet. Zusätzlich präsentieren die Autoren einige selbstentwickelte, auf das Problem zugeschnittene Verfahren.
+Für die computergestützte Analyse planarer Hochfrequenzschaltungen wird mit 3D-Modellen gearbeitet anhand derer die elektrischen Eigenschaften simuliert werden können. Diese 3D-Modelle werden auf Basis von Bildern, die mit Computertomographen erstellt wurden, angefertigt. \newline Dieser Prozess wurde bisher meistens mühsam von Hand durchgeführt. Deshalb werden Algorithmen gesucht, die dabei helfen einfache Strukturen wie Leiterbahnen, Bonddrähte, Lötkugeln und Bohrungen automatisch zu erkennen. Dazu werden im folgenden einige potentielle algorithmische Ansätze vorgestellt und bewertet. \newline
+Zu Beginn der Studie werden einige Hilfsverfahren (z.B. Canny-Edge-Detektor) vorgestellt, die anschließend an verschiedenen Stellen eingesetzt werden. Anschließend untersuchen die Autoren verschiedene Möglichkeiten zweidimensionale "`Slices"' aus den dreidimensionalen Voxeldatensätzen zu extrahieren. Das Ziel dabei ist es, möglichst aussagekräftige Bilder für den Einsatz der, im folgenden vorgestellten, zweidimensionalen Objekterkennungsverfahren zu finden. Es stellt sich heraus, dass verschiedene zweidimensionale Verfahren, aufgrund der Struktur des zu untersuchenden Datensatzes, für Bohrungen und Leiterbahnen gut geeignet sind und größtenteils brauchbare Resultate liefern. \newline 
+Für andere Objekte, wie Kugeln und Bonddrähte, wird der nichtdeterministische RANSAC-Algorithmus und ein auf das Problem zugeschnittener, selbstgewählter Ansatz untersucht.
+Im letzten Abschnitt werden nun die betrachteten Verfahren einander gegenübergestellt und anschließend eine Empfehlung bezüglich des Einsatzes in der Praxis geggeben.
 \else
 \section*{Abstract}
 \fi
