@@ -16,7 +16,7 @@
                parskip=half,
 %				pointlessnumbers, %f"ur englische Texte, dann auch "packages_and_options" und "fonts" anpassen.
 %               draft    % um zu sehen, wo noch nachgebessert werden muss - wichtig, da Bindungskorrektur mit drin
-               final   % ACHTUNG! - in pagestyle.tex noch Seitenstil anpassen
+               %final   % ACHTUNG! - in pagestyle.tex noch Seitenstil anpassen
                ]{scrbook}
 
 %Englisch:			   
@@ -52,16 +52,16 @@
 
 \makeindex
 
-\pruefer{Prof.\,Dr.\,Pro Fessor}
+\pruefer{Prof.\,Dr.-Ing.\,Sven\,Simon}
 \betreuer{Dipl.-Inf.\,Jürgen Hillebrandt,\\ Dipl.-Inf.\,Steffen Kieß} % oder M.\,Sc.\,Roman Tiker
 
 \ifdeutsch
 \begonnen{06.\,Dezember 2011}
-\beendet{08.\,Juni 2012}
+\beendet{06.\,Juni 2012}
 \else
 %Bei englischen Arbeiten ist das Format "October 21, 2005" (siehe http://www.ego4u.de/de/cram-up/vocabulary/date/written)
 \begonnen{Dezember 06, 2011}
-\beendet{Juni 08, 2012}
+\beendet{Juni 06, 2012}
 \fi
 
 \titel{Fachstudie über Algorithmen zur Erkennung von Objekten aus CT-Voxel-Datensätzen}
@@ -70,7 +70,7 @@
 %\studiengang{swt} % Default ist \studiengang{inf}, also Informatik.
 \studiengang{swt}
 \art{Fachstudie}
-\nummer{0000}
+\nummer{}
 
 %Hier das Institut angeben.
 %\institut\fmi
@@ -100,8 +100,8 @@
 %  http://www.informatik.uni-stuttgart.de/zdi/buecherei/ifibib_hilfe_cr.html 
 %  oder
 %  http://www.acm.org/class/
-\crk{H.4.1}%Office Automation: Workflow Management
-\crk{K.1} %Computer Industry: standards
+\crk{I.4}%Office Automation: Workflow Management
+\crk{I.5.1} %Computer Industry: standards
 
 %Angaben in die PDF-Infos uebernehmen
 \makeatletter
@@ -134,7 +134,6 @@
 %Dies wird mit den naechsten zwei Zeilen korrigiert.
 \setcounter{page}{2}
 \cleardoublepage
-
 %Jetzt das Inhaltsverzeichnis
 %Eigener Seitenstil fuer's Inhaltsverzeichnis
 \deftripstyle{preamble}{}{}{}{}{}{\pagemark}
@@ -146,7 +145,10 @@
 %auch im Stil vom Inhaltsverzeichnis
 \ifdeutsch
 \section*{Kurzfassung}
-Für die computergestützte Analyse planarer Hochfrequenzschaltungen wird mit 3D-Modellen gearbeitet anhand derer die elektrischen Eigenschaften simuliert werden können. Diese 3D-Modelle werden auf Basis von Bildern, die mit Computertomographen erstellt wurden, angefertigt. Dieser Prozess wurde bisher meistens mühsam von Hand durchgeführt. Deshalb werden Algorithmen gesucht, die dabei helfen einfache Strukturen wie Leiterbahnen, Bonddrähten, Lötkugeln und Bohrungen automatisch zu erkennen. Im folgenden werden einige potentielle algorithmische Ansätze vorgestellt und bewertet. Zusätzlich präsentieren die Autoren einige selbstentwickelte, auf das Problem zugeschnittene Verfahren.
+Für die computergestützte Analyse planarer Hochfrequenzschaltungen wird mit 3D-Modellen gearbeitet anhand derer die elektrischen Eigenschaften simuliert werden können. Diese 3D-Modelle werden auf Basis von Bildern, die mit Computertomographen erstellt wurden, angefertigt. \newline Dieser Prozess wurde bisher meistens mühsam von Hand durchgeführt. Deshalb werden Algorithmen gesucht, die dabei helfen einfache Strukturen wie Leiterbahnen, Bonddrähte, Lötkugeln und Bohrungen automatisch zu erkennen. Dazu werden im folgenden einige potentielle algorithmische Ansätze vorgestellt und bewertet. \newline
+Zu Beginn der Studie werden einige Hilfsverfahren (z.B. Canny-Edge-Detektor) vorgestellt, die anschließend an verschiedenen Stellen eingesetzt werden. Anschließend untersuchen die Autoren verschiedene Möglichkeiten zweidimensionale "`Slices"' aus den dreidimensionalen Voxeldatensätzen zu extrahieren. Das Ziel dabei ist es, möglichst aussagekräftige Bilder für den Einsatz der, im folgenden vorgestellten, zweidimensionalen Objekterkennungsverfahren zu finden. Es stellt sich heraus, dass verschiedene zweidimensionale Verfahren, aufgrund der Struktur des zu untersuchenden Datensatzes, für Bohrungen und Leiterbahnen gut geeignet sind und größtenteils brauchbare Resultate liefern. \newline 
+Für andere Objekte, wie Kugeln und Bonddrähte, wird der nichtdeterministische RANSAC-Algorithmus und ein auf das Problem zugeschnittener, selbstgewählter Ansatz untersucht.
+Im letzten Abschnitt werden nun die betrachteten Verfahren einander gegenübergestellt und anschließend eine Empfehlung bezüglich des Einsatzes in der Praxis geggeben.
 \else
 \section*{Abstract}
 \fi
@@ -204,27 +206,7 @@ Für die computergestützte Analyse planarer Hochfrequenzschaltungen wird mit 3D
   }}
 \makeatother
 \let\cleardoublepage\clearpage
-\listoffigures
 \let\cleardoublepage\relax
-\listoftables
-
-%Wird nur bei Verwendung von der lstlisting-Umgebung mit dem "caption"-Parameter benoetigt
-%\lstlistoflistings 
-%ansonsten:
-\ifdeutsch
-\listof{Listing}{Verzeichnis der Listings}
-\else
-\listof{Listing}{List of Listings}
-\fi
-
-%mittels \newfloat wurde die Algorithmus-Gleitumgebung definiert.
-%Mit folgendem Befehl werden alle floats dieses Typs ausgegeben
-\ifdeutsch
-\listof{Algorithmus}{Verzeichnis der Algorithmen}
-\else
-\listof{Algorithmus}{List of Algorithms}
-\fi
-%\listofalgorithms %Ist nur f�r Algorithmen, die mittels \begin{algorithm} umschlossen werden, n�tig
 
 \endgroup
 
@@ -259,8 +241,6 @@ Für die computergestützte Analyse planarer Hochfrequenzschaltungen wird mit 3D
 %\renewcommand{\appendixtocname}{Anhang}
 %\renewcommand{\appendixname}{Anhang}
 %\renewcommand{\appendixpagename}{Anhang}
-\appendix
-\input{content/anhang}
 %\printindex
 %\bibliographystyle{alphadin}
 \ifdeutsch
