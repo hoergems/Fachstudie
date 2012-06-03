@@ -160,7 +160,7 @@ Allerdings werden Punkte einer Geraden aufgrund von Ungenauigkeiten nicht exakt 
 
 			
 		\subsubsection{Houghtransformation Erkennung von Kreisen}
-Die Houghtransformation kann auch zur Erkennung von Kreisen eingesetzt werden. Auch hier werden "`Hinweise"', auf die gesuchte Form im Akkumulatorraum gesammelt. 
+Die Houghtransformation \cite{Hart2009} kann auch zur Erkennung von Kreisen eingesetzt werden. Auch hier werden "`Hinweise"', auf die gesuchte Form im Akkumulatorraum gesammelt. 
 Ausgehend von einem Kantenbild wird jeder Pixel einer Kante als von Kreisen mit beliebigem (oder festgelegtem) Radius erzeugt angesehen. Die Transformation in den Akkumulatorraum funktioniert so, dass man dort alle Kreismittelpunkte einträgt, die Kreise erzeugen könnten, auf denen der Pixel liegen würde. Es wird also der entsprechende Punktpixel im Akkumulatorraum um 1 erhöht. \\
 Falls nebenbei zu jedem Kantenpixel die zugehörigen Kantenrichtung bekannt  ist, kann diese Information genutzt werden und es bleiben nur noch zwei möglich Kreise übrig.\\
 Wenn nun die Punkte im Kantenbild einen Kreis repräsentieren, ist an der zum Mittelpunkt gehörenden Stelle im Akkumulatorraum ein besonders hoher Wert eingetragen, da dort sehr viele Kantenpixel des Kreises für den Mittelpunkt abgestimmt haben. Die Maxima im Akkumulatorraum repräsentieren also die Kreismittelpunkte.

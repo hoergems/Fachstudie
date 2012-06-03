@@ -1,9 +1,30 @@
 %Folgende Zeile aktivieren und als SVN property "svn:keywords" auf "Id" setzen, um SVN Versionsinformationen im Dokument zu erhalten
 %\svnInfo $Id: zusammenfassung_und_ausblick.tex 60 2012-01-26 15:56:06Z koppor $ 
 
-\chapter{Zusammenfassung und Ausblick}\label{chap:zusfas}
-Hier bitte einen kurzen Durchgang durch die Arbeit.
-
-\section*{Ausblick}
-...und anschließend einen Ausblick
+\chapter{Zusammenfassung und Empfehlung}\label{chap:zusfas}
+In dieser Fachstudie wurden Verfahren zur Erkennung von Objekten in CT-Scans planarer Hochfrequenzschaltungen untersucht. Da die zu suchenden Objekten begrenzt und sehr unterschiedlich waren sind auch die behandelten Algorithmen in Funktionsweise und Einsatzgebiet stark verschieden. Manche der algorithmischen Ansätze wurden auch spezifisch für die Erkennung einer Art von Objekt konzipiert. Deshalb macht es kaum Sinn einen globalen Vergleich durchzuführen und wir haben uns entschieden unterteilt nach den Objektgruppen jeweils ein einzelnes Fazit zu ziehen.
+\section{Bohrpunkte}
+Zur Erkennung von Bohrpunkten sind 3d-Verfahren grundsätzlich geeignet, wobei nun eben nach Zylindern gesucht werden muss. Es wurden jedoch keine Verfahren untersucht, die einen solchen Ansatz implementieren. Stattdessen wurden hier ausschließlich 2d-Verfahren eingesetzt und bewertet. \\
+Das SURF Verfahren als Variante des SIFT erzielte gute Resultat und erkannte alle Bohrungen. Jedoch wurden einige Merkmalsvektoren irrtümlich als Bohrung identifiziert. \\
+Sowohl das untersuchte Verfahren zum Template-Matching als auch die Houghtransformation hatten das Problem, dass die lokalen Minima nach der Faltung sich zueinander unterschiedlich stark ausgeprägt hatten. Das eingesetzte Schwellwert-Verfahren lieferte bei der Houghtransformation jedoch wesentlich bessere Resultate.\\
+Am erfolgreichsten stellte sich jedoch der selbst implementierte, auf das Problem zugeschnittene Algorithmus zur Erkennung von Kreisen in Kantenbildern heraus.\\
+Er erkannte ohne Fehler alle Bohrpunkte in allen getesteten Bildern, was selbstverständlich auch an den fast fehlerfreien Resultaten des Canny-Edge-Detektors liegt. \\
+Dabei handelt es sich zusätzlich um den (mit Abstand) schnellsten Algorithmus, da er ohne Faltung auskommt.
+\section{Leiterbahnen}
+Da Leiterbahnen einen zweidimensionalen Verlauf besitzen boten die dreidimensionalen Verfahren keinen nennenswerten Vorteil, weil keine zusätzlichen Informationen verarbeitet werden konnten. Deswegen wurden für die Erkennung von Leiterbahnen auch keine dreidimensionalen Verfahren behandelt, sondern ausschließlich auf 2D-Slices gearbeitet. \\
+Das zuerst untersuchte Verfahren war die Houghtransformation für Linien. Es stellte sich allerdings schnell heraus, dass die Geradenerkennung nur bedingt für die Erfassung von Leiterbahnen geeignet war. Der Grund dafür war der unregelmäßige Verlauf der Leiterbahnen mit vielen Kurven und Mündungen in Bohrpunkten, welches zu Unmengen unverknüpfter Graden führte. \\
+Da eine Leiterbahn zwar aus einer begrenzten Zahl von Bauteilen besteht, diese aber quasi frei kombiniert sein können, eigneten sich SIFT/SURF und Template-Matching selbstverständlich auch nicht zur Erkennung. Für diese Verfahren müsste das zu erkennende Objekt immer die gleichen äußerlichen Eigenschaften aufweisen. \\
+Die zwei alternativen Algorithmen erwiesen sich als ausgezeichnet bei der Leiterbahnerkennung. Durch die Ausnutzung objektspezifischer Eigenschaften, wie der Mündung in Bohrpunkten, und der meist hohen Qualität der Kantenerkennung konnten quasi perfekte Erkennungsraten erreicht werden. Der zweite Algorithmus verbesserte dabei das schon sehr gute Ergebnis der ersten Alternative noch einmal. Die Abhängigkeit von FloodFill wurde eleminiert und gleichzeitig die Anfälligkeit gegenüber Fehlern im Canny-Bild weiter gesenkt. \\
+Der zweiter Alternativ-Algorithmus stellt damit die beste gefundene Lösung für das Problem dar und ist auch einer der performantesten der getesteten Algorithmen.
+\section{Lötkugeln}
+Bei der Erkennung der Lötkugeln stellte sich erneut die Frage, ob nur eine Klasse von Verfahren behandelt werden sollte. Durch ihren hohen Reflektanzwert sind die Lötkugeln sowohl auf den Slices als auch in den Voxeldaten leicht zu isolieren. Der größte Vorteil der dreidimensionalen Algorithmen ist, dass mit dem Objekt als Ganzes gearbeitet werden kann. Arbeitet man hingegen nur mit den Slices, so müssen die erkannten Teil-Kreise erst wieder zu einem Ganzen zusammengeführt werden. Dadurch stellen sich zahlreiche neue Probleme, die in ihrer Menge schlussendlich dazu führten, dass ausschließlich dreidimensionale Verfahren getestet wurden. \\
+Eines der bekanntesten Verfahren zur Erkennung von Objekten in verrauschten Daten ist der RANSAC-Algorithmus. Da sich für eine Kugel sehr leicht ein Modell erstellen lässt, konnten mit RANSAC zuverlässig Lötkugeln gefunden werden. Leider relativierte die Möglichkeit die Kugeln durch Thresholds vorzuisolieren den Geschwindigkeitsvorteil, den RANSAC durch die schnelle Untersuchung möglicher Kandidaten erzielt. Insgesamt war die Perfomanz leider enttäuschend. \\
+Der intuitive Algorithmus, welcher den Datensatz in einem hinreichend engen Raster durchsucht und getroffene Objekte auf ihre Kugelförmigkeit überprüft, scheint einen guten Ansatz darzustellen, solange die Akzeptanzbedingung fein genug definiert wird. \\
+Der Algorithmus ist extrem schnell und erkannte alle gesuchten Objekte, da es sich bei diesen um sehr einfache geometrische Objekte handelt, die hier leicht abgegrenzt werden können.
+\section{Bonddrähte}
+Den Bonddrähten, als schwierigste zu erkennende Objekte, wurde insgesamt eher wenig Zeit gewidmet, da kein Algorithmus wirklich geeignet erschien.\\
+Die Effektivität zweidimensionaler Verfahren wurde gar nicht erst untersucht, da es spontan äußerst schwierig erschien entsprechende Slices oder Projektionen zu extrahieren. \\
+Der bei Kugeln eingesetzte RANSAC-Algorithmus ist theoretisch natürlich geeignet, jedoch könnte es sich aufgrund der Vielfalt der Drähte als problematisch herausstellen ein geeignetes Modell zu konstruieren. \\
+Der einzige Algorithmus der tatsächlich zur Erkennung von Bonddrähten eingesetzt wurde, war der intuitive, das Bild rasterartig durchsuchende Algorithmus auf Basis des dreidimensionalen Floodfill. \\
+Dieser erkannte alle Bonddrähte die lang genug waren und bereitete im Test keine Performanzprobleme. Dennoch ist seine universelle Einsatzfähigkeit eher fraglich, zumindest ohne die Akzeptanzbedingung zu verfeinern.
 

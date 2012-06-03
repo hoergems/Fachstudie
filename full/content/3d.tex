@@ -3,7 +3,7 @@
 
 \chapter{3D - Verfahren}
 \label{chap:3d}
-\subsection{RANSAC}
+\section{RANSAC}
 RANSAC (\textbf{RA}ndom \textbf{SA}mple \textbf{C}onsensus) ist ein iteratives Verfahren zur Schätzung eines mathematischen Models anhand von Beobachtungsdaten mit Ausreißern. Der Algorithmus ist nicht-deterministisch, da ihm probabilistische Ansätze zu Grund liegen. Aufgrund seiner Robustheit wird er häufig im Bereich des maschinellen Sehens eingesetzt. 
 
 \begin{figure}[H]
@@ -36,7 +36,7 @@ Nach ausreichend vielen Iterationen wird das beste Modell benutzt um alle Punkte
 \subsection{Bewertung}
 Der Algorithmus eignet sich sehr gut um in großen Datenmengen schnell Instanzen von Modellen zu finden. Für den diskutierten Anwendungsfall ist er leider vergleichsweise langsam. Der Grund dafür ist, dass die zu suchenden Objekte schon durch einen Dichte-Threshhold sehr gut vor-isoliert werden können. Man kann sich deshalb direkt darauf konzentrieren einzelne Punktmengen auf bestimmte Eigenschaften hin zu untersuchen. Der große Vorteil von RANSAC schnell mögliche Kandidaten zu entdecken wird deshalb negiert.
 
-\subsection{Alternativer Algorithmus zur Erkennung von Lötkugeln und Bonddrähten}
+\section{Alternativer Algorithmus zur Erkennung von Lötkugeln und Bonddrähten}
 Der wohl am naheliegenste Ansatz Objekte in einem Datensatz zu finden, ist den Datensatz in einem hinreichend kleinen Raster abzusuchen und an jedem Punkt das damit verbundene Objekt auf die Ähnlichkeit mit den gesuchten Objekten hin zu untersuchen.
 Ein solcher Ansatz ist insbesonere bei den großen und einigermaßen wohlgeformten Lötkugeln sehr intuitiv, wie in der folgenden Abbildung zu sehen ist.
 
