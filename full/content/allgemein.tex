@@ -89,7 +89,7 @@ Der Median-Schnitt \cite{Kruger1994} ist ein Sortierverfahren für n-dimensional
 d(a,b)=\sqrt{(a_R-b_R)^2 + (a_G-b_G)^2 + (a_B-b_B)^2}
 \end{equation*}
 	\subsection {Floodfill-Algorithmus}
-Floodfill ist ein Algorithmus, der in multi-dimensionalen Arrays zusammenhängende Felder erkennen und färben kann. Ob Felder zusammenhängen ist abhängig davon, ob sie identische Eigenschaften aufweisen. Bei den hier verwendeten Bilddaten wird dafür die Farbe der Pixel/Voxel verwendet. Ausgehend von einem Startpunkt durchsucht der Algorithmus “flutartig” das Array und ändert die Suchrichtung, sobald eine Eigenschaft nicht mehr erfüllt ist. \\
+Floodfill \cite{Andre2005} ist ein Algorithmus, der in multi-dimensionalen Arrays zusammenhängende Felder erkennen und färben kann. Ob Felder zusammenhängen ist abhängig davon, ob sie identische Eigenschaften aufweisen. Bei den hier verwendeten Bilddaten wird dafür die Farbe der Pixel/Voxel verwendet. Ausgehend von einem Startpunkt durchsucht der Algorithmus “flutartig” das Array und ändert die Suchrichtung, sobald eine Eigenschaft nicht mehr erfüllt ist. \\
 Der Algorithmus betrachtet ausgehend von einem Startpunkt rekursiv alle benachbarten Felder und färbt diese gegebenenfalls. Ausgehend davon wie viele der Nachbarfelder betrachtet werden spricht man z.B. im zweidimensionalen von “fill4” (oben, unten, links, rechts) oder “fill8” (alle Nachbarn). \\ \\
 Alle eingesetzten Verfahren arbeiten auf dem Resultat eines Canny-Edge-Detektors. Zusätzlich wurde bei den Verfahren, die auf einem gefärbten Bild arbeiten, eine Färbung zusammenhängender schwarzer Flächen nach folgendem Prinzip durchgeführt: \\
 
